@@ -78,7 +78,7 @@ const getAvailableTools = Effect.fn("Cli.debug.agent.getAvailableTools")(functio
             return fail(`Model not found: ${error.providerID}/${error.modelID}`)
           }
           if (error instanceof Provider.NoModelsError) return fail(`No models found for provider ${error.providerID}`)
-          return fail("No providers found")
+          return fail("Không tìm thấy provider nào")
         },
       }),
     ))
@@ -118,7 +118,7 @@ function parseToolParams(input?: string) {
   })
 
   if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
-    throw new Error("Tool params must be an object.")
+    throw new Error("Tham số tool phải là một object.")
   }
   return parsed as Record<string, unknown>
 }
@@ -144,7 +144,7 @@ const createToolContext = Effect.fn("Cli.debug.agent.createToolContext")(functio
               }
               if (error instanceof Provider.NoModelsError)
                 return fail(`No models found for provider ${error.providerID}`)
-              return fail("No providers found")
+              return fail("Không tìm thấy provider nào")
             },
           }),
         )

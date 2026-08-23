@@ -163,7 +163,7 @@ export const githubInstall = Effect.fn("Cli.github.install")(function* () {
   yield* Effect.promise(async () => {
     {
       UI.empty()
-      prompts.intro("Install GitHub agent")
+      prompts.intro("Cài đặt GitHub agent")
       const app = await getAppInfo()
       await installGitHubApp()
 
@@ -184,10 +184,10 @@ export const githubInstall = Effect.fn("Cli.github.install")(function* () {
         let step2
         if (provider === "amazon-bedrock") {
           step2 =
-            "Configure OIDC in AWS - https://docs.github.com/en/actions/how-tos/security-for-github-actions/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services"
+            "Cấu hình OIDC trong AWS - https://docs.github.com/en/actions/how-tos/security-for-github-actions/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services"
         } else {
           step2 = [
-            `    2. Add the following secrets in org or repo (${app.owner}/${app.repo}) settings`,
+            `    2. Thêm các secret sau trong phần cài đặt của org hoặc repo (${app.owner}/${app.repo})`,
             "",
             ...providers[provider].env.map((e) => `       - ${e}`),
           ].join("\n")
@@ -195,14 +195,14 @@ export const githubInstall = Effect.fn("Cli.github.install")(function* () {
 
         prompts.outro(
           [
-            "Next steps:",
+            "Các bước tiếp theo:",
             "",
-            `    1. Commit the \`${WORKFLOW_FILE}\` file and push`,
+            `    1. Commit file \`${WORKFLOW_FILE}\` và push`,
             step2,
             "",
-            "    3. Go to a GitHub issue and comment `/oc summarize` to see the agent in action",
+            "    3. Mở một GitHub issue và bình luận `/oc summarize` để xem agent hoạt động",
             "",
-            "   Learn more about the GitHub agent - https://opencode.ai/docs/github/#usage-examples",
+            "   Tìm hiểu thêm về GitHub agent - https://opencode.ai/docs/github/#usage-examples",
           ].join("\n"),
         )
       }
@@ -210,7 +210,7 @@ export const githubInstall = Effect.fn("Cli.github.install")(function* () {
       async function getAppInfo() {
         const project = ctx.project
         if (project.vcs !== "git") {
-          prompts.log.error(`Could not find git repository. Please run this command from a git repository.`)
+          prompts.log.error(`Không tìm thấy repository git. Vui lòng chạy lệnh này từ trong một repository git.`)
           throw new UI.CancelledError()
         }
 
@@ -220,7 +220,7 @@ export const githubInstall = Effect.fn("Cli.github.install")(function* () {
         )
         const parsed = parseGitHubRemote(info)
         if (!parsed) {
-          prompts.log.error(`Could not find git repository. Please run this command from a git repository.`)
+          prompts.log.error(`Không tìm thấy repository git. Vui lòng chạy lệnh này từ trong một repository git.`)
           throw new UI.CancelledError()
         }
         return { owner: parsed.owner, repo: parsed.repo, root: ctx.worktree }
@@ -234,7 +234,7 @@ export const githubInstall = Effect.fn("Cli.github.install")(function* () {
           google: 3,
         }
         let provider = await prompts.select({
-          message: "Select provider",
+          message: "Chọn provider",
           maxItems: 8,
           options: pipe(
             providers,
@@ -246,7 +246,7 @@ export const githubInstall = Effect.fn("Cli.github.install")(function* () {
             map((x) => ({
               label: x.name,
               value: x.id,
-              hint: priority[x.id] === 0 ? "recommended" : undefined,
+              hint: priority[x.id] === 0 ? "được khuyến nghị" : undefined,
             })),
           ),
         })
@@ -260,7 +260,7 @@ export const githubInstall = Effect.fn("Cli.github.install")(function* () {
         const providerData = providers[provider]!
 
         const model = await prompts.select({
-          message: "Select model",
+          message: "Chọn model",
           maxItems: 8,
           options: pipe(
             providerData.models,
@@ -279,11 +279,11 @@ export const githubInstall = Effect.fn("Cli.github.install")(function* () {
 
       async function installGitHubApp() {
         const s = prompts.spinner()
-        s.start("Installing GitHub app")
+        s.start("Đang cài đặt GitHub app")
 
         // Get installation
         const installation = await getInstallation()
-        if (installation) return s.stop("GitHub app already installed")
+        if (installation) return s.stop("GitHub app đã được cài từ trước")
 
         // Open browser
         const url = "https://github.com/apps/opencode-agent"
@@ -296,12 +296,12 @@ export const githubInstall = Effect.fn("Cli.github.install")(function* () {
 
         exec(command, (error) => {
           if (error) {
-            prompts.log.warn(`Could not open browser. Please visit: ${url}`)
+            prompts.log.warn(`Không thể mở trình duyệt. Vui lòng truy cập: ${url}`)
           }
         })
 
         // Wait for installation
-        s.message("Waiting for GitHub app to be installed")
+        s.message("Đang chờ GitHub app được cài đặt")
         const MAX_RETRIES = 120
         let retries = 0
         do {
@@ -310,7 +310,7 @@ export const githubInstall = Effect.fn("Cli.github.install")(function* () {
 
           if (retries > MAX_RETRIES) {
             s.stop(
-              `Failed to detect GitHub app installation. Make sure to install the app for the \`${app.owner}/${app.repo}\` repository.`,
+              `Không phát hiện được việc cài đặt GitHub app. Hãy đảm bảo bạn đã cài app cho repository \`${app.owner}/${app.repo}\`.`,
             )
             throw new UI.CancelledError()
           }
@@ -319,7 +319,7 @@ export const githubInstall = Effect.fn("Cli.github.install")(function* () {
           await sleep(1000)
         } while (true) // oxlint-disable-line no-constant-condition
 
-        s.stop("Installed GitHub app")
+        s.stop("Đã cài đặt GitHub app")
 
         async function getInstallation() {
           return await fetch(`https://api.opencode.ai/get_github_app_installation?owner=${app.owner}&repo=${app.repo}`)
@@ -369,7 +369,7 @@ jobs:
           model: ${provider}/${model}`,
         )
 
-        prompts.log.success(`Added workflow file: "${WORKFLOW_FILE}"`)
+        prompts.log.success(`Đã thêm file workflow: "${WORKFLOW_FILE}"`)
       }
     }
   })
@@ -516,7 +516,7 @@ export const githubRun = Effect.fn("Cli.github.run")(function* (args: { event?: 
         await runLocalEffect(sessionShare.share(session.id))
         return session.id.slice(-8)
       })()
-      console.log("opencode session", session.id)
+      console.log("session opencode", session.id)
 
       // Handle event types:
       // REPO_EVENTS (schedule, workflow_dispatch): no issue/PR context, output to logs/PR only
@@ -525,7 +525,7 @@ export const githubRun = Effect.fn("Cli.github.run")(function* (args: { event?: 
       if (isRepoEvent) {
         // Repo event - no issue/PR context, output goes to logs
         if (isWorkflowDispatchEvent && actor) {
-          console.log(`Triggered by: ${actor}`)
+          console.log(`Kích hoạt bởi: ${actor}`)
         }
         const branchPrefix = isWorkflowDispatchEvent ? "dispatch" : "schedule"
         const branch = await checkoutNewBranch(branchPrefix)
@@ -534,7 +534,7 @@ export const githubRun = Effect.fn("Cli.github.run")(function* (args: { event?: 
         const { dirty, uncommittedChanges, switched } = await branchIsDirty(head, branch)
         if (switched) {
           // Agent switched branches (likely created its own branch/PR)
-          console.log("Agent managed its own branch, skipping infrastructure push/PR")
+          console.log("Agent tự quản lý branch riêng, bỏ qua push/PR hạ tầng")
           console.log("Response:", response)
         } else if (dirty) {
           const summary = await summarize(response)
@@ -545,12 +545,12 @@ export const githubRun = Effect.fn("Cli.github.run")(function* (args: { event?: 
             repoData.data.default_branch,
             branch,
             summary,
-            `${response}\n\nTriggered by ${triggerType}${footer({ image: true })}`,
+            `${response}\n\nĐược kích hoạt bởi ${triggerType}${footer({ image: true })}`,
           )
           if (pr) {
-            console.log(`Created PR #${pr}`)
+            console.log(`Đã tạo PR #${pr}`)
           } else {
-            console.log("Skipped PR creation (no new commits)")
+            console.log("Bỏ qua tạo PR (không có commit mới)")
           }
         } else {
           console.log("Response:", response)
@@ -568,7 +568,7 @@ export const githubRun = Effect.fn("Cli.github.run")(function* (args: { event?: 
           const response = await chat(`${userPrompt}\n\n${dataPrompt}`, promptFiles)
           const { dirty, uncommittedChanges, switched } = await branchIsDirty(head, prData.headRefName)
           if (switched) {
-            console.log("Agent managed its own branch, skipping infrastructure push")
+            console.log("Agent tự quản lý branch riêng, bỏ qua push hạ tầng")
           }
           if (dirty && !switched) {
             const summary = await summarize(response)
@@ -586,7 +586,7 @@ export const githubRun = Effect.fn("Cli.github.run")(function* (args: { event?: 
           const response = await chat(`${userPrompt}\n\n${dataPrompt}`, promptFiles)
           const { dirty, uncommittedChanges, switched } = await branchIsDirty(head, forkBranch)
           if (switched) {
-            console.log("Agent managed its own branch, skipping infrastructure push")
+            console.log("Agent tự quản lý branch riêng, bỏ qua push hạ tầng")
           }
           if (dirty && !switched) {
             const summary = await summarize(response)
@@ -797,7 +797,7 @@ export const githubRun = Effect.fn("Cli.github.run")(function* (args: { event?: 
           },
         })
         if (!res.ok) {
-          console.error(`Failed to download image: ${url}`)
+          console.error(`Không thể tải ảnh: ${url}`)
           continue
         }
 

@@ -82,7 +82,7 @@ export function SubagentFooter() {
             </text>
             <Show when={subagentInfo().total > 0}>
               <text style={{ fg: theme.textMuted }}>
-                ({subagentInfo().index} of {subagentInfo().total})
+                ({subagentInfo().index} / {subagentInfo().total})
               </text>
             </Show>
             <Show when={usage()}>
@@ -101,7 +101,7 @@ export function SubagentFooter() {
               backgroundColor={hover() === "parent" ? theme.backgroundElement : theme.backgroundPanel}
             >
               <text fg={theme.text}>
-                Parent <span style={{ fg: theme.textMuted }}>{parentShortcut()}</span>
+                Cha <span style={{ fg: theme.textMuted }}>{parentShortcut()}</span>
               </text>
             </box>
             <box
@@ -111,7 +111,7 @@ export function SubagentFooter() {
               backgroundColor={hover() === "prev" ? theme.backgroundElement : theme.backgroundPanel}
             >
               <text fg={theme.text}>
-                Prev <span style={{ fg: theme.textMuted }}>{previousShortcut()}</span>
+                Trước <span style={{ fg: theme.textMuted }}>{previousShortcut()}</span>
               </text>
             </box>
             <box
@@ -121,7 +121,7 @@ export function SubagentFooter() {
               backgroundColor={hover() === "next" ? theme.backgroundElement : theme.backgroundPanel}
             >
               <text fg={theme.text}>
-                Next <span style={{ fg: theme.textMuted }}>{nextShortcut()}</span>
+                Sau <span style={{ fg: theme.textMuted }}>{nextShortcut()}</span>
               </text>
             </box>
           </box>

@@ -283,14 +283,14 @@ export function createPromptState(input: PromptInput): PromptState {
   const [shell, setShell] = createSignal(false)
   const placeholder = createMemo(() => {
     if (shell()) {
-      return new StyledText([fg(input.theme().muted)('Run a command... "git status"')])
+      return new StyledText([fg(input.theme().muted)('Chạy một lệnh... "git status"')])
     }
 
     if (!input.state().first) {
       return ""
     }
 
-    return new StyledText([fg(input.theme().muted)('Ask anything... "Fix a TODO in the codebase"')])
+    return new StyledText([fg(input.theme().muted)('Hỏi bất cứ điều gì... "Fix a TODO in the codebase"')])
   })
 
   let history = createPromptHistory(input.history)
@@ -414,10 +414,10 @@ export function createPromptState(input: PromptInput): PromptState {
         action: "editor" as const,
         name: "editor",
         display: "/editor",
-        description: "compose in your external editor",
+        description: "soạn nội dung trong trình soạn thảo ngoài",
       } satisfies SlashOption,
-      { kind: "slash", name: "new", display: "/new", description: "start a new session" } satisfies SlashOption,
-      { kind: "slash", name: "exit", display: "/exit", description: "close OpenCode" } satisfies SlashOption,
+      { kind: "slash", name: "new", display: "/new", description: "bắt đầu session mới" } satisfies SlashOption,
+      { kind: "slash", name: "exit", display: "/exit", description: "đóng OpenCode" } satisfies SlashOption,
     ]
     const hidden = new Set(builtins.map((item) => item.name))
     const showSkillMenu = !shell() && skillCommands().length > 0 && !hasSkillsCommand()
@@ -433,7 +433,7 @@ export function createPromptState(input: PromptInput): PromptState {
               action: "skill-menu" as const,
               name: "skills",
               display: "/skills",
-              description: "browse available skills",
+              description: "duyệt các skill khả dụng",
             } satisfies SlashOption,
           ]
         : []),
@@ -835,7 +835,7 @@ export function createPromptState(input: PromptInput): PromptState {
       })
     } catch {
       restore(current)
-      input.onStatus("failed to open editor")
+      input.onStatus("không thể mở trình soạn thảo")
     }
   }
 
@@ -981,7 +981,7 @@ export function createPromptState(input: PromptInput): PromptState {
     commands: [
       {
         name: "prompt.clear",
-        title: "Clear prompt or exit",
+        title: "Xóa prompt hoặc thoát",
         category: "Prompt",
         run() {
           if (requestExit()) return
@@ -998,7 +998,7 @@ export function createPromptState(input: PromptInput): PromptState {
     commands: [
       {
         name: "session.interrupt",
-        title: "Interrupt session",
+        title: "Ngắt session",
         category: "Session",
         run() {
           if (input.onInterrupt()) return
@@ -1031,7 +1031,7 @@ export function createPromptState(input: PromptInput): PromptState {
     commands: [
       {
         name: "prompt.history.previous",
-        title: "Previous prompt history",
+        title: "Lịch sử prompt trước",
         category: "Prompt",
         run(ctx: { event: KeyEvent }) {
           return historyCommand(-1, ctx.event)
@@ -1039,7 +1039,7 @@ export function createPromptState(input: PromptInput): PromptState {
       },
       {
         name: "prompt.history.next",
-        title: "Next prompt history",
+        title: "Lịch sử prompt sau",
         category: "Prompt",
         run(ctx: { event: KeyEvent }) {
           return historyCommand(1, ctx.event)
@@ -1058,7 +1058,7 @@ export function createPromptState(input: PromptInput): PromptState {
     bindings: [
       {
         key: "!",
-        desc: "Shell mode",
+        desc: "Chế độ shell",
         group: "Prompt",
         cmd() {
           if (shell()) return false
@@ -1076,13 +1076,13 @@ export function createPromptState(input: PromptInput): PromptState {
     bindings: [
       {
         key: "escape",
-        desc: "Exit shell mode",
+        desc: "Thoát chế độ shell",
         group: "Prompt",
         cmd: () => setShellMode(false),
       },
       {
         key: "backspace",
-        desc: "Exit shell mode",
+        desc: "Thoát chế độ shell",
         group: "Prompt",
         cmd() {
           if (!area || area.isDestroyed) return false
@@ -1099,25 +1099,25 @@ export function createPromptState(input: PromptInput): PromptState {
     commands: [
       {
         name: "prompt.autocomplete.prev",
-        title: "Previous autocomplete item",
+        title: "Mục autocomplete trước",
         category: "Autocomplete",
         run: () => menu.move(-1),
       },
       {
         name: "prompt.autocomplete.next",
-        title: "Next autocomplete item",
+        title: "Mục autocomplete sau",
         category: "Autocomplete",
         run: () => menu.move(1),
       },
       {
         name: "prompt.autocomplete.hide",
-        title: "Hide autocomplete",
+        title: "Ẩn autocomplete",
         category: "Autocomplete",
         run: cancelAutocomplete,
       },
       {
         name: "prompt.autocomplete.select",
-        title: "Select autocomplete item",
+        title: "Chọn mục autocomplete",
         category: "Autocomplete",
         run() {
           if (mode() === "slash" && options().length === 0) {
@@ -1129,7 +1129,7 @@ export function createPromptState(input: PromptInput): PromptState {
       },
       {
         name: "prompt.autocomplete.complete",
-        title: "Complete autocomplete item",
+        title: "Hoàn tất mục autocomplete",
         category: "Autocomplete",
         run() {
           if (mode() === "slash" && options().length === 0) {
@@ -1175,7 +1175,7 @@ export function createPromptState(input: PromptInput): PromptState {
     }
 
     if (!next.text.trim()) {
-      input.onStatus(input.state().phase === "running" ? "waiting for current response" : "empty prompt ignored")
+      input.onStatus(input.state().phase === "running" ? "đang chờ phản hồi hiện tại" : "đã bỏ qua prompt rỗng")
       return
     }
 
@@ -1190,7 +1190,7 @@ export function createPromptState(input: PromptInput): PromptState {
         ? undefined
         : parseSlashCommand(next.text, input.commands())
     if (parsed?.type === "pending") {
-      input.onStatus("loading commands")
+      input.onStatus("đang tải lệnh")
       return
     }
 

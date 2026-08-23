@@ -24,8 +24,8 @@ export function DialogDebug() {
   const entries = createMemo(() => {
     const model = local.model.current()
     return [
-      { label: "Version", value: `${InstallationVersion} (${InstallationChannel})` },
-      { label: "Date", value: new Date().toISOString() },
+      { label: "Phiên bản", value: `${InstallationVersion} (${InstallationChannel})` },
+      { label: "Ngày", value: new Date().toISOString() },
       { label: "OS", value: describeOS() },
       { label: "Terminal", value: describeTerminal() },
       { label: "Session ID", value: route.data.type === "session" ? route.data.sessionID : "n/a" },
@@ -41,13 +41,13 @@ export function DialogDebug() {
       .write?.(text)
       .then(() => {
         setCopied(true)
-        toast.show({ message: "Debug info copied to clipboard", variant: "info" })
+        toast.show({ message: "Đã sao chép thông tin debug vào clipboard", variant: "info" })
       })
       .catch(toast.error)
   }
 
   useBindings(() => ({
-    bindings: [{ key: "return", desc: "Copy debug info", group: "Dialog", cmd: copy }],
+    bindings: [{ key: "return", desc: "Sao chép thông tin debug", group: "Dialog", cmd: copy }],
   }))
 
   return (
@@ -77,10 +77,10 @@ export function DialogDebug() {
         </For>
       </box>
       <box flexDirection="row" justifyContent="space-between">
-        <text fg={theme.textMuted}>Share this when reporting an issue.</text>
+        <text fg={theme.textMuted}>Chia sẻ thông tin này khi báo lỗi.</text>
         <text onMouseUp={copy}>
           <span style={{ fg: copied() ? theme.success : theme.text }}>
-            <b>{copied() ? "✓ copied" : "copy"}</b>{" "}
+            <b>{copied() ? "✓ đã sao chép" : "sao chép"}</b>{" "}
           </span>
           <span style={{ fg: theme.textMuted }}>enter</span>
         </text>

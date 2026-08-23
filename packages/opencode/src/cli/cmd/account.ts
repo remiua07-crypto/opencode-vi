@@ -41,15 +41,15 @@ const isActiveOrgChoice = (
 const loginEffect = Effect.fn("login")(function* (url: string) {
   const service = yield* Account.Service
 
-  yield* Prompt.intro("Log in")
+  yield* Prompt.intro("Đăng nhập")
   const login = yield* service.login(url)
 
-  yield* Prompt.log.info("Go to: " + login.url)
-  yield* Prompt.log.info("Enter code: " + login.user)
+  yield* Prompt.log.info("Truy cập: " + login.url)
+  yield* Prompt.log.info("Nhập mã: " + login.user)
   yield* openBrowser(login.url)
 
   const s = Prompt.spinner()
-  yield* s.start("Waiting for authorization...")
+  yield* s.start("Đang chờ xác thực...")
 
   const poll = (wait: Duration.Duration): Effect.Effect<PollResult, AccountError> =>
     Effect.gen(function* () {
@@ -68,34 +68,34 @@ const loginEffect = Effect.fn("login")(function* (url: string) {
   yield* Match.valueTags(result, {
     PollSuccess: (r) =>
       Effect.gen(function* () {
-        yield* s.stop("Logged in as " + r.email)
-        yield* Prompt.outro("Done")
+        yield* s.stop("Đã đăng nhập với tài khoản " + r.email)
+        yield* Prompt.outro("Hoàn tất")
       }),
-    PollExpired: () => s.stop("Device code expired", 1),
-    PollDenied: () => s.stop("Authorization denied", 1),
-    PollError: (r) => s.stop("Error: " + String(r.cause), 1),
-    PollPending: () => s.stop("Unexpected state", 1),
-    PollSlow: () => s.stop("Unexpected state", 1),
+    PollExpired: () => s.stop("Mã thiết bị đã hết hạn", 1),
+    PollDenied: () => s.stop("Xác thực bị từ chối", 1),
+    PollError: (r) => s.stop("Lỗi: " + String(r.cause), 1),
+    PollPending: () => s.stop("Trạng thái không mong đợi", 1),
+    PollSlow: () => s.stop("Trạng thái không mong đợi", 1),
   })
 })
 
 const logoutEffect = Effect.fn("logout")(function* (email?: string) {
   const service = yield* Account.Service
   const accounts = yield* service.list()
-  if (accounts.length === 0) return yield* println("Not logged in")
+  if (accounts.length === 0) return yield* println("Chưa đăng nhập")
 
   if (email) {
     const match = accounts.find((a) => a.email === email)
-    if (!match) return yield* println("Account not found: " + email)
+    if (!match) return yield* println("Không tìm thấy tài khoản: " + email)
     yield* service.remove(match.id)
-    yield* Prompt.outro("Logged out from " + email)
+    yield* Prompt.outro("Đã đăng xuất khỏi " + email)
     return
   }
 
   const active = yield* service.active()
   const activeID = Option.map(active, (a) => a.id)
 
-  yield* Prompt.intro("Log out")
+  yield* Prompt.intro("Đăng xuất")
 
   const opts = accounts.map((a) => {
     const isActive = Option.isSome(activeID) && activeID.value === a.id
@@ -105,11 +105,11 @@ const logoutEffect = Effect.fn("logout")(function* (email?: string) {
     }
   })
 
-  const selected = yield* Prompt.select({ message: "Select account to log out", options: opts })
+  const selected = yield* Prompt.select({ message: "Chọn tài khoản để đăng xuất", options: opts })
   if (Option.isNone(selected)) return
 
   yield* service.remove(selected.value.id)
-  yield* Prompt.outro("Logged out from " + selected.value.email)
+  yield* Prompt.outro("Đã đăng xuất khỏi " + selected.value.email)
 })
 
 interface OrgChoice {
@@ -122,7 +122,7 @@ const switchEffect = Effect.fn("switch")(function* () {
   const service = yield* Account.Service
 
   const groups = yield* service.orgsByAccount()
-  if (groups.length === 0) return yield* println("Not logged in")
+  if (groups.length === 0) return yield* println("Chưa đăng nhập")
 
   const active = yield* service.active()
 
@@ -135,24 +135,24 @@ const switchEffect = Effect.fn("switch")(function* () {
       }
     }),
   )
-  if (opts.length === 0) return yield* println("No orgs found")
+  if (opts.length === 0) return yield* println("Không tìm thấy org nào")
 
-  yield* Prompt.intro("Switch org")
+  yield* Prompt.intro("Chuyển org")
 
-  const selected = yield* Prompt.select<OrgChoice>({ message: "Select org", options: opts })
+  const selected = yield* Prompt.select<OrgChoice>({ message: "Chọn org", options: opts })
   if (Option.isNone(selected)) return
 
   const choice = selected.value
   yield* service.use(choice.accountID, Option.some(choice.orgID))
-  yield* Prompt.outro("Switched to " + choice.label)
+  yield* Prompt.outro("Đã chuyển đến " + choice.label)
 })
 
 const orgsEffect = Effect.fn("orgs")(function* () {
   const service = yield* Account.Service
 
   const groups = yield* service.orgsByAccount()
-  if (groups.length === 0) return yield* println("No accounts found")
-  if (!groups.some((group) => group.orgs.length > 0)) return yield* println("No orgs found")
+  if (groups.length === 0) return yield* println("Không tìm thấy tài khoản nào")
+  if (!groups.some((group) => group.orgs.length > 0)) return yield* println("Không tìm thấy org nào")
 
   const active = yield* service.active()
 
@@ -167,11 +167,11 @@ const orgsEffect = Effect.fn("orgs")(function* () {
 const openEffect = Effect.fn("open")(function* () {
   const service = yield* Account.Service
   const active = yield* service.active()
-  if (Option.isNone(active)) return yield* println("No active account")
+  if (Option.isNone(active)) return yield* println("Không có tài khoản hoạt động")
 
   const url = active.value.url
   yield* openBrowser(url)
-  yield* Prompt.outro("Opened " + url)
+  yield* Prompt.outro("Đã mở " + url)
 })
 
 export const LoginCommand = effectCmd({
@@ -180,7 +180,7 @@ export const LoginCommand = effectCmd({
   instance: false,
   builder: (yargs) =>
     yargs.positional("url", {
-      describe: "server URL",
+      describe: "URL máy chủ",
       type: "string",
     }),
   handler: Effect.fn("Cli.account.login")(function* (args) {
@@ -195,7 +195,7 @@ export const LogoutCommand = effectCmd({
   instance: false,
   builder: (yargs) =>
     yargs.positional("email", {
-      describe: "account email to log out from",
+      describe: "email tài khoản cần đăng xuất",
       type: "string",
     }),
   handler: Effect.fn("Cli.account.logout")(function* (args) {
@@ -241,23 +241,23 @@ export const ConsoleCommand = cmd({
     yargs
       .command({
         ...LoginCommand,
-        describe: "log in to console",
+        describe: "đăng nhập vào console",
       })
       .command({
         ...LogoutCommand,
-        describe: "log out from console",
+        describe: "đăng xuất khỏi console",
       })
       .command({
         ...SwitchCommand,
-        describe: "switch active org",
+        describe: "chuyển org hoạt động",
       })
       .command({
         ...OrgsCommand,
-        describe: "list orgs",
+        describe: "liệt kê org",
       })
       .command({
         ...OpenCommand,
-        describe: "open active console account",
+        describe: "mở tài khoản console đang hoạt động",
       })
       .demandCommand(),
   async handler() {},

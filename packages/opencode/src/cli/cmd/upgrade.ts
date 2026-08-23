@@ -6,16 +6,16 @@ import { InstallationVersion } from "@opencode-ai/core/installation/version"
 
 export const UpgradeCommand = {
   command: "upgrade [target]",
-  describe: "upgrade opencode to the latest or a specific version",
+  describe: "nâng cấp opencode lên phiên bản mới nhất hoặc một phiên bản cụ thể",
   builder: (yargs: Argv) => {
     return yargs
       .positional("target", {
-        describe: "version to upgrade to, for ex '0.1.48' or 'v0.1.48'",
+        describe: "phiên bản cần nâng cấp, ví dụ '0.1.48' hoặc 'v0.1.48'",
         type: "string",
       })
       .option("method", {
         alias: "m",
-        describe: "installation method to use",
+        describe: "phương pháp cài đặt sẽ dùng",
         type: "string",
         choices: ["curl", "npm", "pnpm", "bun", "brew", "choco", "scoop"],
       })
@@ -24,51 +24,51 @@ export const UpgradeCommand = {
     UI.empty()
     UI.println(UI.logo("  "))
     UI.empty()
-    prompts.intro("Upgrade")
+    prompts.intro("Nâng cấp")
     const detectedMethod = await Installation.method()
     const method = (args.method as Installation.Method) ?? detectedMethod
     if (method === "unknown") {
-      prompts.log.error(`opencode is installed to ${process.execPath} and may be managed by a package manager`)
+      prompts.log.error(`opencode được cài tại ${process.execPath} và có thể đang được quản lý bởi một trình quản lý gói`)
       const install = await prompts.select({
-        message: "Install anyways?",
+        message: "Vẫn cài đặt?",
         options: [
-          { label: "Yes", value: true },
-          { label: "No", value: false },
+          { label: "Có", value: true },
+          { label: "Không", value: false },
         ],
         initialValue: false,
       })
       if (!install) {
-        prompts.outro("Done")
+        prompts.outro("Hoàn tất")
         return
       }
     }
-    prompts.log.info("Using method: " + method)
+    prompts.log.info("Dùng phương pháp: " + method)
     const target = args.target ? args.target.replace(/^v/, "") : await Installation.latest()
 
     if (InstallationVersion === target) {
-      prompts.log.warn(`opencode upgrade skipped: ${target} is already installed`)
-      prompts.outro("Done")
+      prompts.log.warn(`bỏ qua nâng cấp opencode: ${target} đã được cài đặt`)
+      prompts.outro("Hoàn tất")
       return
     }
 
-    prompts.log.info(`From ${InstallationVersion} → ${target}`)
+    prompts.log.info(`Từ ${InstallationVersion} → ${target}`)
     const spinner = prompts.spinner()
-    spinner.start("Upgrading...")
+    spinner.start("Đang nâng cấp...")
     const err = await Installation.upgrade(method, target).catch((err) => err)
     if (err) {
-      spinner.stop("Upgrade failed", 1)
+      spinner.stop("Nâng cấp thất bại", 1)
       if (err instanceof Installation.UpgradeFailedError) {
         // necessary because choco only allows install/upgrade in elevated terminals
         if (method === "choco" && err.stderr.includes("not running from an elevated command shell")) {
-          prompts.log.error("Please run the terminal as Administrator and try again")
+          prompts.log.error("Vui lòng chạy terminal với quyền Administrator và thử lại")
         } else {
           prompts.log.error(err.stderr)
         }
       } else if (err instanceof Error) prompts.log.error(err.message)
-      prompts.outro("Done")
+      prompts.outro("Hoàn tất")
       return
     }
-    spinner.stop("Upgrade complete")
-    prompts.outro("Done")
+    spinner.stop("Nâng cấp hoàn tất")
+    prompts.outro("Hoàn tất")
   },
 }

@@ -61,7 +61,7 @@ async function loadWorkspaceAdapters(input: {
     return response.data
   } catch (err) {
     input.toast.show({
-      title: "Failed to load workspace adapters",
+      title: "Tải adapter workspace thất bại",
       message: errorMessage(err),
       variant: "error",
     })
@@ -106,7 +106,7 @@ export async function warpWorkspaceSession(input: {
     })
   } catch (err) {
     input.toast.show({
-      title: "Failed to warp session",
+      title: "Warp session thất bại",
       message: errorMessage(err),
       variant: "error",
     })
@@ -116,15 +116,15 @@ export async function warpWorkspaceSession(input: {
     if (result?.error && "name" in result.error && result.error.name === "VcsApplyError") {
       await DialogAlert.show(
         input.dialog,
-        "Unable to Warp Session",
-        "Unable to apply file changes to this workspace. It has existing changes that conflict or is based off a different branch. Session has not been warped.",
+        "Không thể Warp Session",
+        "Không thể áp dụng các thay đổi tệp vào workspace này. Workspace đã có thay đổi xung đột hoặc dựa trên một nhánh khác. Session chưa được warp.",
       )
       return false
     }
 
     input.toast.show({
-      title: "Failed to warp session",
-      message: errorMessage(result?.error ?? "no response"),
+      title: "Warp session thất bại",
+      message: errorMessage(result?.error ?? "không có phản hồi"),
       variant: "error",
     })
     return false
@@ -211,13 +211,13 @@ export function DialogWorkspaceSelect(props: {
         title: adapter.name,
         value: { type: "new" as const, workspaceType: adapter.type, workspaceName: adapter.name },
         description: adapter.description,
-        category: "New workspace",
+        category: "Workspace mới",
       })),
       {
-        title: "None",
+        title: "Không",
         value: { type: "none" as const },
-        description: "Use the local project",
-        category: "Choose workspace",
+        description: "Dùng dự án local",
+        category: "Chọn workspace",
       },
       ...recent.map((workspace: Workspace) => ({
         title: workspace.name,
@@ -228,15 +228,15 @@ export function DialogWorkspaceSelect(props: {
           workspaceType: workspace.type,
           workspaceName: workspace.name,
         },
-        category: "Choose workspace",
+        category: "Chọn workspace",
       })),
       ...(hasMore
         ? [
             {
-              title: "View all workspaces",
+              title: "Xem tất cả workspace",
               value: { type: "existing-list" as const },
-              description: "Choose from all workspaces",
-              category: "Choose workspace",
+              description: "Chọn từ tất cả workspace",
+              category: "Chọn workspace",
             },
           ]
         : []),
@@ -293,7 +293,7 @@ function DialogExistingWorkspaceSelect(props: {
 
   return (
     <DialogSelect<ExistingWorkspaceSelectValue>
-      title="Existing Workspace"
+      title="Workspace hiện có"
       options={options()}
       onSelect={(option) => {
         void props.onSelect({

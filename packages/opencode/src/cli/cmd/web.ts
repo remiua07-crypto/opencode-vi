@@ -31,14 +31,16 @@ function getNetworkIPs() {
 export const WebCommand = effectCmd({
   command: "web",
   builder: (yargs) => withNetworkOptions(yargs),
-  describe: "start opencode server and open web interface",
+  describe: "khởi động máy chủ opencode và mở giao diện web",
   // Server loads instances per-request via x-opencode-directory header — no
   // ambient project InstanceContext needed at startup.
   instance: false,
   handler: Effect.fn("Cli.web")(function* (args) {
     const { Server } = yield* Effect.promise(() => import("../../server/server"))
     if (!Flag.OPENCODE_SERVER_PASSWORD) {
-      UI.println(UI.Style.TEXT_WARNING_BOLD + "!  OPENCODE_SERVER_PASSWORD is not set; server is unsecured.")
+      UI.println(
+        UI.Style.TEXT_WARNING_BOLD + "!  OPENCODE_SERVER_PASSWORD chưa được đặt; máy chủ không được bảo mật.",
+      )
     }
     const opts = yield* resolveNetworkOptions(args)
     const server = yield* Effect.promise(() => Server.listen(opts))
@@ -49,14 +51,14 @@ export const WebCommand = effectCmd({
     if (opts.hostname === "0.0.0.0") {
       // Show localhost for local access
       const localhostUrl = `http://localhost:${server.port}`
-      UI.println(UI.Style.TEXT_INFO_BOLD + "  Local access:      ", UI.Style.TEXT_NORMAL, localhostUrl)
+      UI.println(UI.Style.TEXT_INFO_BOLD + "  Truy cập cục bộ:   ", UI.Style.TEXT_NORMAL, localhostUrl)
 
       // Show network IPs for remote access
       const networkIPs = getNetworkIPs()
       if (networkIPs.length > 0) {
         for (const ip of networkIPs) {
           UI.println(
-            UI.Style.TEXT_INFO_BOLD + "  Network access:    ",
+            UI.Style.TEXT_INFO_BOLD + "  Truy cập mạng:     ",
             UI.Style.TEXT_NORMAL,
             `http://${ip}:${server.port}`,
           )
@@ -75,7 +77,7 @@ export const WebCommand = effectCmd({
       open(localhostUrl).catch(() => {})
     } else {
       const displayUrl = server.url.toString()
-      UI.println(UI.Style.TEXT_INFO_BOLD + "  Web interface:    ", UI.Style.TEXT_NORMAL, displayUrl)
+      UI.println(UI.Style.TEXT_INFO_BOLD + "  Giao diện web:     ", UI.Style.TEXT_NORMAL, displayUrl)
       open(displayUrl).catch(() => {})
     }
 

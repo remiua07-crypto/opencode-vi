@@ -111,21 +111,21 @@ async function toolError(part: ToolPart) {
     const next = toolInlineInfo(part)
     inline({
       icon: "✗",
-      title: `${next.title} failed`,
+      title: `${next.title} thất bại`,
       ...(next.description && { description: next.description }),
     })
     return
   } catch {
     inline({
       icon: "✗",
-      title: `${part.tool} failed`,
+      title: `${part.tool} thất bại`,
     })
   }
 }
 
 export const RunCommand = effectCmd({
   command: "run [message..]",
-  describe: "run opencode with a message",
+  describe: "chạy opencode với một tin nhắn",
   // --attach connects to a remote server (no local instance needed); the
   // default path runs an in-process server and needs the project instance.
   instance: (args) => !args.attach,
@@ -135,87 +135,87 @@ export const RunCommand = effectCmd({
   builder: (yargs: Argv) =>
     yargs
       .positional("message", {
-        describe: "message to send",
+        describe: "tin nhắn cần gửi",
         type: "string",
         array: true,
         default: [],
       })
       .option("command", {
-        describe: "the command to run, use message for args",
+        describe: "lệnh cần chạy, dùng message để truyền tham số",
         type: "string",
       })
       .option("continue", {
         alias: ["c"],
-        describe: "continue the last session",
+        describe: "tiếp tục session gần nhất",
         type: "boolean",
       })
       .option("session", {
         alias: ["s"],
-        describe: "session id to continue",
+        describe: "id của session cần tiếp tục",
         type: "string",
       })
       .option("fork", {
-        describe: "fork the session before continuing (requires --continue or --session)",
+        describe: "fork session trước khi tiếp tục (yêu cầu --continue hoặc --session)",
         type: "boolean",
       })
       .option("share", {
         type: "boolean",
-        describe: "share the session",
+        describe: "chia sẻ session",
       })
       .option("model", {
         type: "string",
         alias: ["m"],
-        describe: "model to use in the format of provider/model",
+        describe: "model sử dụng theo định dạng provider/model",
       })
       .option("agent", {
         type: "string",
-        describe: "agent to use",
+        describe: "agent sử dụng",
       })
       .option("format", {
         type: "string",
         choices: ["default", "json"],
         default: "default",
-        describe: "format: default (formatted) or json (raw JSON events)",
+        describe: "định dạng: default (đã định dạng) hoặc json (sự kiện JSON thô)",
       })
       .option("file", {
         alias: ["f"],
         type: "string",
         array: true,
-        describe: "file(s) to attach to message",
+        describe: "(các) tệp đính kèm vào tin nhắn",
       })
       .option("title", {
         type: "string",
-        describe: "title for the session (uses truncated prompt if no value provided)",
+        describe: "tiêu đề cho session (dùng prompt rút gọn nếu không cung cấp giá trị)",
       })
       .option("attach", {
         type: "string",
-        describe: "attach to a running opencode server (e.g., http://localhost:4096)",
+        describe: "gắn vào một server opencode đang chạy (ví dụ http://localhost:4096)",
       })
       .option("password", {
         alias: ["p"],
         type: "string",
-        describe: "basic auth password (defaults to OPENCODE_SERVER_PASSWORD)",
+        describe: "mật khẩu basic auth (mặc định lấy từ OPENCODE_SERVER_PASSWORD)",
       })
       .option("username", {
         alias: ["u"],
         type: "string",
-        describe: "basic auth username (defaults to OPENCODE_SERVER_USERNAME or 'opencode')",
+        describe: "tên người dùng basic auth (mặc định là OPENCODE_SERVER_USERNAME hoặc 'opencode')",
       })
       .option("dir", {
         type: "string",
-        describe: "directory to run in, path on remote server if attaching",
+        describe: "thư mục để chạy, là đường dẫn trên server từ xa nếu dùng --attach",
       })
       .option("port", {
         type: "number",
-        describe: "port for the local server (defaults to random port if no value provided)",
+        describe: "cổng cho server cục bộ (mặc định chọn cổng ngẫu nhiên nếu không cung cấp giá trị)",
       })
       .option("variant", {
         type: "string",
-        describe: "model variant (provider-specific reasoning effort, e.g., high, max, minimal)",
+        describe: "biến thể model (mức reasoning riêng theo provider, ví dụ high, max, minimal)",
       })
       .option("thinking", {
         type: "boolean",
-        describe: "show thinking blocks",
+        describe: "hiển thị các khối suy luận (thinking)",
       })
       .option("mini", {
         type: "boolean",
@@ -226,22 +226,22 @@ export const RunCommand = effectCmd({
         type: "boolean",
         default: true,
         hidden: true,
-        describe: "replay interactive session history on resume and after resize (use --no-replay to disable)",
+        describe: "phát lại lịch sử session tương tác khi resume và sau khi resize (dùng --no-replay để tắt)",
       })
       .option("replay-limit", {
         type: "number",
         hidden: true,
-        describe: "cap visible interactive replay to the newest N messages",
+        describe: "giới hạn phần phát lại tương tác hiển thị ở N tin nhắn mới nhất",
       })
       .option("interactive", {
         alias: ["i"],
         type: "boolean",
-        describe: "run in direct interactive split-footer mode",
+        describe: "chạy ở chế độ tương tác trực tiếp với footer tách đôi",
         default: false,
       })
       .option("auto", {
         type: "boolean",
-        describe: "auto-approve permissions that are not explicitly denied (dangerous!)",
+        describe: "tự động phê duyệt các permission không bị từ chối rõ ràng (nguy hiểm!)",
         default: false,
       })
       .option("yolo", {
@@ -258,7 +258,7 @@ export const RunCommand = effectCmd({
         type: "boolean",
         default: false,
         hidden: true,
-        describe: "enable direct interactive demo slash commands; pass one as the message to run it immediately",
+        describe: "bật các lệnh demo tương tác trực tiếp; truyền một lệnh làm tin nhắn để chạy ngay lập tức",
       }),
   handler: Effect.fn("Cli.run")(function* (args) {
     const { Agent } = yield* Effect.promise(() => import("@/agent/agent"))
@@ -290,19 +290,19 @@ export const RunCommand = effectCmd({
         .join(" ")
 
       if (interactive && args.command) {
-        die("--mini cannot be used with --command")
+        die("--mini không thể dùng cùng với --command")
       }
 
       if (interactive && args._?.[0] !== "mini") {
-        die("--mini must be used without the run subcommand")
+        die("--mini phải được dùng mà không có lệnh con run")
       }
 
       if (args.demo && !interactive) {
-        die("--demo requires --mini")
+        die("--demo yêu cầu --mini")
       }
 
       if (interactive && args.format === "json") {
-        die("--mini cannot be used with --format json")
+        die("--mini không thể dùng cùng với --format json")
       }
 
       if (args["replay-limit"] !== undefined && !interactive) {
@@ -313,7 +313,7 @@ export const RunCommand = effectCmd({
         args["replay-limit"] !== undefined &&
         (!Number.isInteger(args["replay-limit"]) || args["replay-limit"] <= 0)
       ) {
-        die("--replay-limit must be a positive integer")
+        die("--replay-limit phải là số nguyên dương")
       }
 
       if (interactive && !process.stdout.isTTY) {
@@ -339,7 +339,7 @@ export const RunCommand = effectCmd({
           process.chdir(path.isAbsolute(args.dir) ? args.dir : path.join(root, args.dir))
           return process.cwd()
         } catch {
-          UI.error("Failed to change directory to " + args.dir)
+          UI.error("Không thể đổi thư mục sang " + args.dir)
           process.exit(1)
         }
       })()
@@ -361,7 +361,7 @@ export const RunCommand = effectCmd({
         for (const filePath of list) {
           const resolvedPath = path.resolve(args.attach ? root : (directory ?? root), filePath)
           if (!(await Filesystem.exists(resolvedPath))) {
-            UI.error(`File not found: ${filePath}`)
+            UI.error(`Không tìm thấy tệp: ${filePath}`)
             process.exit(1)
           }
 
@@ -378,7 +378,7 @@ export const RunCommand = effectCmd({
             try {
               const opened = await handle.stat()
               if (!opened.isFile() || Number(opened.size) > ATTACH_FILE_MAX_BYTES) {
-                UI.error(`Cannot attach local file larger than 10 MiB or a special file: ${filePath}`)
+                UI.error(`Không thể đính kèm tệp cục bộ lớn hơn 10 MiB hoặc tệp đặc biệt: ${filePath}`)
                 process.exit(1)
               }
               if (opened.size === 0) return Buffer.alloc(0)
@@ -418,12 +418,12 @@ export const RunCommand = effectCmd({
       const initialInput = resolveRunInput(rawMessage, piped)
 
       if (message.trim().length === 0 && !args.command && !interactive) {
-        UI.error("You must provide a message or a command")
+        UI.error("Bạn phải cung cấp một tin nhắn hoặc một lệnh")
         process.exit(1)
       }
 
       if (args.fork && !args.continue && !args.session) {
-        UI.error("--fork requires --continue or --session")
+        UI.error("--fork yêu cầu --continue hoặc --session")
         process.exit(1)
       }
 
@@ -462,7 +462,7 @@ export const RunCommand = effectCmd({
             .catch(() => undefined)
 
           if (!current?.data) {
-            UI.error("Session not found")
+            UI.error("Không tìm thấy session")
             process.exit(1)
           }
 
@@ -565,7 +565,7 @@ export const RunCommand = effectCmd({
         })
         const id = result.data?.id
         if (!id) {
-          throw new Error("Failed to create session")
+          throw new Error("Không thể tạo session")
         }
 
         void share(sdk, id).catch(() => {})
@@ -588,7 +588,7 @@ export const RunCommand = effectCmd({
           return next
         }
 
-        UI.error("Failed to resolve remote directory")
+        UI.error("Không thể xác định thư mục từ xa")
         process.exit(1)
       }
 
@@ -603,7 +603,7 @@ export const RunCommand = effectCmd({
           UI.println(
             UI.Style.TEXT_WARNING_BOLD + "!",
             UI.Style.TEXT_NORMAL,
-            `agent "${name}" not found. Falling back to default agent`,
+            `agent "${name}" không tồn tại. Quay lại dùng agent mặc định`,
           )
           return undefined
         }
@@ -611,7 +611,7 @@ export const RunCommand = effectCmd({
           UI.println(
             UI.Style.TEXT_WARNING_BOLD + "!",
             UI.Style.TEXT_NORMAL,
-            `agent "${name}" is a subagent, not a primary agent. Falling back to default agent`,
+            `agent "${name}" là subagent chứ không phải agent chính. Quay lại dùng agent mặc định`,
           )
           return undefined
         }
@@ -631,7 +631,7 @@ export const RunCommand = effectCmd({
           UI.println(
             UI.Style.TEXT_WARNING_BOLD + "!",
             UI.Style.TEXT_NORMAL,
-            `failed to list agents from ${args.attach}. Falling back to default agent`,
+            `không thể liệt kê agent từ ${args.attach}. Quay lại dùng agent mặc định`,
           )
           return undefined
         }
@@ -641,7 +641,7 @@ export const RunCommand = effectCmd({
           UI.println(
             UI.Style.TEXT_WARNING_BOLD + "!",
             UI.Style.TEXT_NORMAL,
-            `agent "${name}" not found. Falling back to default agent`,
+            `agent "${name}" không tồn tại. Quay lại dùng agent mặc định`,
           )
           return undefined
         }
@@ -650,7 +650,7 @@ export const RunCommand = effectCmd({
           UI.println(
             UI.Style.TEXT_WARNING_BOLD + "!",
             UI.Style.TEXT_NORMAL,
-            `agent "${name}" is a subagent, not a primary agent. Falling back to default agent`,
+            `agent "${name}" là subagent chứ không phải agent chính. Quay lại dùng agent mặc định`,
           )
           return undefined
         }
@@ -670,7 +670,7 @@ export const RunCommand = effectCmd({
       async function execute(sdk: OpencodeClient) {
         const sess = await session(sdk)
         if (!sess?.id) {
-          UI.error("Session not found")
+          UI.error("Không tìm thấy session")
           process.exit(1)
         }
         const sessionID = sess.id

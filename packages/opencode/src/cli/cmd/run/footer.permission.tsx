@@ -100,7 +100,7 @@ export function RejectField(props: {
       minHeight={1}
       maxHeight={3}
       wrapMode="word"
-      placeholder="Tell OpenCode what to do differently"
+      placeholder="Nói OpenCode biết cần làm khác đi thế nào"
       placeholderColor={props.theme.muted}
       textColor={props.theme.text}
       focusedTextColor={props.theme.text}
@@ -145,14 +145,14 @@ export function RunPermissionBody(props: {
   const busy = createMemo(() => state().submitting)
   const title = createMemo(() => {
     if (state().stage === "always") {
-      return "Always allow"
+      return "Luôn cho phép"
     }
 
     if (state().stage === "reject") {
-      return "Reject permission"
+      return "Từ chối permission"
     }
 
-    return "Permission required"
+    return "Cần cấp quyền"
   })
 
   createEffect(() => {

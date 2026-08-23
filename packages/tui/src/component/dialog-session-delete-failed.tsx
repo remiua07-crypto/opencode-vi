@@ -21,14 +21,14 @@ export function DialogSessionDeleteFailed(props: {
   const options = [
     {
       id: "delete" as const,
-      title: "Delete workspace",
-      description: "Delete the workspace and all sessions attached to it.",
+      title: "Xóa workspace",
+      description: "Xóa workspace cùng tất cả session đang gắn với nó.",
       run: props.onDelete,
     },
     {
       id: "restore" as const,
-      title: "Restore to new workspace",
-      description: "Try to restore this session into a new workspace.",
+      title: "Khôi phục sang workspace mới",
+      description: "Cố gắng khôi phục session này vào một workspace mới.",
       run: props.onRestore,
     },
   ]
@@ -42,11 +42,11 @@ export function DialogSessionDeleteFailed(props: {
 
   useBindings(() => ({
     bindings: [
-      { key: "return", desc: "Confirm recovery option", group: "Dialog", cmd: () => void confirm() },
-      { key: "left", desc: "Delete broken session", group: "Dialog", cmd: () => setStore("active", "delete") },
-      { key: "up", desc: "Delete broken session", group: "Dialog", cmd: () => setStore("active", "delete") },
-      { key: "right", desc: "Restore broken session", group: "Dialog", cmd: () => setStore("active", "restore") },
-      { key: "down", desc: "Restore broken session", group: "Dialog", cmd: () => setStore("active", "restore") },
+      { key: "return", desc: "Xác nhận tùy chọn khôi phục", group: "Dialog", cmd: () => void confirm() },
+      { key: "left", desc: "Xóa session bị lỗi", group: "Dialog", cmd: () => setStore("active", "delete") },
+      { key: "up", desc: "Xóa session bị lỗi", group: "Dialog", cmd: () => setStore("active", "delete") },
+      { key: "right", desc: "Khôi phục session bị lỗi", group: "Dialog", cmd: () => setStore("active", "restore") },
+      { key: "down", desc: "Khôi phục session bị lỗi", group: "Dialog", cmd: () => setStore("active", "restore") },
     ],
   }))
 
@@ -54,17 +54,17 @@ export function DialogSessionDeleteFailed(props: {
     <box paddingLeft={2} paddingRight={2} gap={1}>
       <box flexDirection="row" justifyContent="space-between">
         <text attributes={TextAttributes.BOLD} fg={theme.text}>
-          Failed to Delete Session
+          Xóa Session Thất Bại
         </text>
         <text fg={theme.textMuted} onMouseUp={() => dialog.clear()}>
           esc
         </text>
       </box>
       <text fg={theme.textMuted} wrapMode="word">
-        {`The session "${props.session}" could not be deleted because the workspace "${props.workspace}" is not available.`}
+        {`Session "${props.session}" không thể xóa vì workspace "${props.workspace}" hiện không khả dụng.`}
       </text>
       <text fg={theme.textMuted} wrapMode="word">
-        Choose how you want to recover this broken workspace session.
+        Chọn cách bạn muốn khôi phục session workspace bị lỗi này.
       </text>
       <box flexDirection="column" paddingBottom={1} gap={1}>
         <For each={options}>

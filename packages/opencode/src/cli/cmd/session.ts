@@ -43,17 +43,17 @@ function pagerCmd(): string[] {
 
 export const SessionCommand = cmd({
   command: "session",
-  describe: "manage sessions",
+  describe: "quản lý session",
   builder: (yargs: Argv) => yargs.command(SessionListCommand).command(SessionDeleteCommand).demandCommand(),
   async handler() {},
 })
 
 export const SessionDeleteCommand = effectCmd({
   command: "delete <sessionID>",
-  describe: "delete a session",
+  describe: "xóa một session",
   builder: (yargs) =>
     yargs.positional("sessionID", {
-      describe: "session ID to delete",
+      describe: "ID session cần xóa",
       type: "string",
       demandOption: true,
     }),
@@ -62,23 +62,23 @@ export const SessionDeleteCommand = effectCmd({
     const sessionID = SessionID.make(args.sessionID)
     yield* svc
       .remove(sessionID)
-      .pipe(Effect.catchIf(NotFoundError.isInstance, () => fail(`Session not found: ${args.sessionID}`)))
-    UI.println(UI.Style.TEXT_SUCCESS_BOLD + `Session ${args.sessionID} deleted` + UI.Style.TEXT_NORMAL)
+      .pipe(Effect.catchIf(NotFoundError.isInstance, () => fail(`Không tìm thấy session: ${args.sessionID}`)))
+    UI.println(UI.Style.TEXT_SUCCESS_BOLD + `Đã xóa session ${args.sessionID}` + UI.Style.TEXT_NORMAL)
   }),
 })
 
 export const SessionListCommand = effectCmd({
   command: "list",
-  describe: "list sessions",
+  describe: "liệt kê session",
   builder: (yargs) =>
     yargs
       .option("max-count", {
         alias: "n",
-        describe: "limit to N most recent sessions",
+        describe: "giới hạn N session gần nhất",
         type: "number",
       })
       .option("format", {
-        describe: "output format",
+        describe: "định dạng đầu ra",
         type: "string",
         choices: ["table", "json"],
         default: "table",
@@ -121,7 +121,7 @@ function formatSessionTable(sessions: Session.Info[]): string {
   const maxIdWidth = Math.max(20, ...sessions.map((s) => s.id.length))
   const maxTitleWidth = Math.max(25, ...sessions.map((s) => s.title.length))
 
-  const header = `Session ID${" ".repeat(maxIdWidth - 10)}  Title${" ".repeat(maxTitleWidth - 5)}  Updated`
+  const header = `Session ID${" ".repeat(maxIdWidth - 10)}  Title${" ".repeat(maxTitleWidth - 5)}  Cập nhật`
   lines.push(header)
   lines.push("─".repeat(header.length))
   for (const session of sessions) {

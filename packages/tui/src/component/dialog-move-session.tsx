@@ -113,7 +113,7 @@ export function DialogMoveSession(props: DialogMoveSessionProps) {
     if (showError()) return []
     const data = directoryData()
     const current = currentRoot()?.directory
-    if (directories.loading && !data && !current) return [{ title: "Loading project directories...", value: undefined }]
+    if (directories.loading && !data && !current) return [{ title: "Đang tải thư mục dự án...", value: undefined }]
     const roots = [...(data ?? [])]
     if (current && !roots.some((item) => item.directory === current)) roots.unshift({ directory: current })
     roots.sort((a, b) => {
@@ -123,7 +123,7 @@ export function DialogMoveSession(props: DialogMoveSessionProps) {
       if (!a.strategy && !b.strategy) return a.directory.length - b.directory.length
       return 0
     })
-    if (roots.length === 0) return [{ title: "No project directories found", value: undefined }]
+    if (roots.length === 0) return [{ title: "Không tìm thấy thư mục dự án nào", value: undefined }]
 
     const subdirectories = sync.data.session
       .filter((session) => session.projectID === props.projectID && session.path && ![".", "/"].includes(session.path))
@@ -161,9 +161,9 @@ export function DialogMoveSession(props: DialogMoveSessionProps) {
       return {
         title,
         titleView: isRemoving ? (
-          <span style={{ fg: theme.error }}>Deleting {item.location}</span>
+          <span style={{ fg: theme.error }}>Đang xóa {item.location}</span>
         ) : deleting ? (
-          <span style={{ fg: theme.text }}>Press {deleteHint()} again to confirm</span>
+          <span style={{ fg: theme.text }}>Nhấn {deleteHint()} lần nữa để xác nhận</span>
         ) : suffix ? (
           <>
             {visible.slice(0, split)}
@@ -176,7 +176,7 @@ export function DialogMoveSession(props: DialogMoveSessionProps) {
           directory: item.location,
           subdirectory: item.location !== item.root.directory,
         } as const,
-        category: item.root.directory === current ? "Current" : "Other",
+        category: item.root.directory === current ? "Hiện tại" : "Khác",
         titleWidth,
         truncateTitle: "left" as const,
       }
@@ -235,8 +235,8 @@ export function DialogMoveSession(props: DialogMoveSessionProps) {
       if ("data" in result.error && result.error.data.forceRequired) {
         const status = await sdk.client.vcs.status({ directory: selected.directory }).catch(() => undefined)
         const choice = await DialogWorkspaceFileChanges.show(dialog, status?.data ?? [], {
-          title: "Delete working copy?",
-          message: "This working copy has file changes. Do you want to delete it anyway?",
+          title: "Xóa bản sao làm việc?",
+          message: "Bản sao làm việc này có thay đổi tệp. Bạn vẫn muốn xóa chứ?",
         })
         if (choice !== "yes") {
           reopen()
@@ -254,7 +254,7 @@ export function DialogMoveSession(props: DialogMoveSessionProps) {
         if (forced.error) {
           toast.show({
             variant: "error",
-            title: "Failed to delete project copy",
+            title: "Xóa bản sao dự án thất bại",
             message: errorMessage(forced.error),
           })
           reopen()
@@ -268,7 +268,7 @@ export function DialogMoveSession(props: DialogMoveSessionProps) {
       }
       toast.show({
         variant: "error",
-        title: "Failed to delete project copy",
+        title: "Xóa bản sao dự án thất bại",
         message: errorMessage(result.error),
       })
       return
@@ -286,11 +286,11 @@ export function DialogMoveSession(props: DialogMoveSessionProps) {
   return (
     <box minHeight={showError() ? 5 : fullHeight()}>
       <DialogSelect
-        title="Move session"
+        title="Chuyển Session"
         titleView={
           <box flexDirection="row" gap={1}>
             <text fg={theme.text} attributes={TextAttributes.BOLD}>
-              Move session
+              Chuyển Session
             </text>
             <Show when={working() || directories.loading || loadedProject.loading}>
               <Spinner />
@@ -303,7 +303,7 @@ export function DialogMoveSession(props: DialogMoveSessionProps) {
           showError() ? (
             <box paddingLeft={4} paddingRight={4}>
               <text fg={theme.error} attributes={TextAttributes.BOLD}>
-                Could not load project directories
+                Không thể tải thư mục dự án
               </text>
               <text fg={theme.textMuted}>{errorMessage(loadError())}</text>
             </box>
@@ -321,12 +321,12 @@ export function DialogMoveSession(props: DialogMoveSessionProps) {
             : [
                 {
                   command: "dialog.move_session.new",
-                  title: "new",
+                  title: "mới",
                   onTrigger: () => props.onSelect({ type: "new" }),
                 },
                 {
                   command: "dialog.move_session.delete",
-                  title: "delete",
+                  title: "xóa",
                   disabled: (option) => {
                     const value = option?.value
                     if (!value || value.type !== "directory" || value.subdirectory) return true
@@ -336,7 +336,7 @@ export function DialogMoveSession(props: DialogMoveSessionProps) {
                 },
                 {
                   command: "dialog.move_session.refresh",
-                  title: "refresh",
+                  title: "làm mới",
                   onTrigger: () => void refetch(),
                 },
               ]

@@ -83,8 +83,8 @@ function storedView(value: unknown): DiffView | undefined {
 }
 
 function diffSourceLabel(mode: DiffMode) {
-  if (mode === "last-turn") return "last turn"
-  if (mode === "branch") return "main branch"
+  if (mode === "last-turn") return "lượt trước"
+  if (mode === "branch") return "nhánh main"
   return "working tree"
 }
 
@@ -433,7 +433,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
   const commands = [
     {
       name: "diff.close",
-      title: "Close diff viewer",
+      title: "Đóng trình xem Diff",
       category: "VCS",
       run() {
         const returnRoute = params()?.returnRoute
@@ -447,7 +447,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.down",
-      title: "Move diff viewer down",
+      title: "Di chuyển trình xem Diff xuống",
       category: "VCS",
       run: focusRunner({
         files() {
@@ -461,7 +461,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.up",
-      title: "Move diff viewer up",
+      title: "Di chuyển trình xem Diff lên",
       category: "VCS",
       run: focusRunner({
         files() {
@@ -475,7 +475,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.page.down",
-      title: "Page diff viewer down",
+      title: "Cuộn trang trình xem Diff xuống",
       category: "VCS",
       run: focusRunner({
         files() {
@@ -489,7 +489,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.page.up",
-      title: "Page diff viewer up",
+      title: "Cuộn trang trình xem Diff lên",
       category: "VCS",
       run: focusRunner({
         files() {
@@ -503,7 +503,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.toggle",
-      title: "Toggle diff viewer item",
+      title: "Bật/tắt mục trong trình xem Diff",
       category: "VCS",
       run: focusRunner({
         files() {
@@ -514,7 +514,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.expand",
-      title: "Expand diff viewer item",
+      title: "Mở rộng mục trong trình xem Diff",
       category: "VCS",
       run: focusRunner({
         files() {
@@ -532,7 +532,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.expand_all",
-      title: "Expand all diff viewer folders",
+      title: "Mở rộng tất cả thư mục trong trình xem Diff",
       category: "VCS",
       run: focusRunner({
         files() {
@@ -543,7 +543,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.collapse",
-      title: "Collapse diff viewer item",
+      title: "Thu gọn mục trong trình xem Diff",
       category: "VCS",
       run: focusRunner({
         files() {
@@ -562,7 +562,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.next_hunk",
-      title: "Jump to next diff hunk",
+      title: "Nhảy đến hunk Diff kế tiếp",
       category: "VCS",
       run() {
         jumpRelativeHunk(1)
@@ -570,7 +570,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.previous_hunk",
-      title: "Jump to previous diff hunk",
+      title: "Nhảy đến hunk Diff trước",
       category: "VCS",
       run() {
         jumpRelativeHunk(-1)
@@ -578,7 +578,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.next_file",
-      title: "Jump to next diff file",
+      title: "Nhảy đến file Diff kế tiếp",
       category: "VCS",
       run() {
         jumpRelativePatchFile(1)
@@ -586,7 +586,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.previous_file",
-      title: "Jump to previous diff file",
+      title: "Nhảy đến file Diff trước",
       category: "VCS",
       run() {
         jumpRelativePatchFile(-1)
@@ -594,7 +594,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.mark_reviewed",
-      title: "Toggle selected diff file reviewed",
+      title: "Bật/tắt đánh dấu đã xem file Diff đang chọn",
       category: "VCS",
       run() {
         toggleSelectedFileReviewed()
@@ -602,7 +602,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.switch_focus",
-      title: "Switch diff viewer focus",
+      title: "Chuyển tiêu điểm trình xem Diff",
       category: "VCS",
       run() {
         if (!showFileTree()) return
@@ -615,7 +615,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.toggle_file_tree",
-      title: "Toggle diff viewer file tree",
+      title: "Bật/tắt cây file trong trình xem Diff",
       category: "VCS",
       run() {
         const next = !fileTreeEnabled()
@@ -626,7 +626,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.single_patch",
-      title: "Toggle single patch view",
+      title: "Bật/tắt chế độ xem patch đơn",
       category: "VCS",
       run() {
         setSelectedHunk(undefined)
@@ -653,7 +653,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.switch_source",
-      title: "Switch diff viewer source",
+      title: "Chuyển nguồn của trình xem Diff",
       category: "VCS",
       run() {
         openSwitchDiffDialog()
@@ -661,7 +661,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.toggle_view",
-      title: "Toggle diff viewer split or unified view",
+      title: "Bật/tắt chế độ xem chia đôi hoặc hợp nhất của trình xem Diff",
       category: "VCS",
       run() {
         if (!splitAvailable()) return
@@ -673,7 +673,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     },
     {
       name: "diff.help",
-      title: "Show more diff viewer shortcuts",
+      title: "Hiện thêm phím tắt của trình xem Diff",
       category: "VCS",
       run() {
         openHelpDialog()
@@ -687,21 +687,21 @@ function DiffViewer(props: { api: TuiPluginApi }) {
       {
         title: "Working tree",
         value: "git" as const,
-        description: "Show current git changes",
+        description: "Xem thay đổi git hiện tại",
       },
       ...(vcs?.branch && vcs.default_branch && vcs.branch !== vcs.default_branch
         ? [
             {
-              title: "Main branch",
+              title: "Nhánh main",
               value: "branch" as const,
-              description: "Show changes compared to main branch",
+              description: "Xem thay đổi so với nhánh main",
             },
           ]
         : []),
       {
-        title: "Last turn",
+        title: "Lượt trước",
         value: "last-turn" as const,
-        description: "Show changes from the last assistant turn",
+        description: "Xem thay đổi từ lượt trả lời gần nhất của trợ lý",
       },
     ]
   })
@@ -709,7 +709,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
   const openSwitchDiffDialog = () => {
     props.api.ui.dialog.replace(() => (
       <DialogSelect
-        title="Switch source"
+        title="Chuyển nguồn"
         skipFilter={true}
         renderFilter={false}
         current={mode()}
@@ -737,11 +737,11 @@ function DiffViewer(props: { api: TuiPluginApi }) {
   useBindings(() => ({
     commands,
     bindings: [
-      { key: "j,down", cmd: "diff.down", desc: "Move diff viewer down" },
-      { key: "k,up", cmd: "diff.up", desc: "Move diff viewer up" },
-      { key: "pagedown,ctrl+f", cmd: "diff.page.down", desc: "Page diff viewer down" },
-      { key: "pageup,ctrl+b", cmd: "diff.page.up", desc: "Page diff viewer up" },
-      { key: "m", cmd: "diff.mark_reviewed", desc: "Mark selected file reviewed" },
+      { key: "j,down", cmd: "diff.down", desc: "Di chuyển trình xem Diff xuống" },
+      { key: "k,up", cmd: "diff.up", desc: "Di chuyển trình xem Diff lên" },
+      { key: "pagedown,ctrl+f", cmd: "diff.page.down", desc: "Cuộn trang trình xem Diff xuống" },
+      { key: "pageup,ctrl+b", cmd: "diff.page.up", desc: "Cuộn trang trình xem Diff lên" },
+      { key: "m", cmd: "diff.mark_reviewed", desc: "Đánh dấu đã xem file đang chọn" },
       ...props.api.tuiConfig.keybinds.gather(
         "diff",
         commands.map((command) => command.name),
@@ -757,7 +757,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
           <text fg={theme().textMuted}>{diffSourceLabel(mode())}</text>
           <box flexGrow={1} />
           <text fg={theme().textMuted}>
-            {files().length} {files().length === 1 ? "file" : "files"}
+            {files().length} {files().length === 1 ? "file" : "file"}
           </text>
         </Panel>
 
@@ -766,19 +766,19 @@ function DiffViewer(props: { api: TuiPluginApi }) {
             <Match when={diff.loading}>
               <Separator axis="x" />
               <box flexGrow={1} paddingLeft={1}>
-                <text fg={theme().textMuted}>Loading diff...</text>
+                <text fg={theme().textMuted}>Đang tải Diff...</text>
               </box>
             </Match>
             <Match when={!diff.loading && files().length === 0}>
               <Separator axis="x" />
               <box flexGrow={1} paddingLeft={1}>
-                <text fg={theme().textMuted}>No diff!</text>
+                <text fg={theme().textMuted}>Không có Diff!</text>
               </box>
             </Match>
             <Match when={!diff.loading && diff.error}>
               <Separator axis="x" />
               <box flexGrow={1} paddingLeft={1}>
-                <text fg={theme().error}>Failed to load diff</text>
+                <text fg={theme().error}>Không thể tải Diff</text>
               </box>
             </Match>
             <Match when={!diff.loading}>
@@ -836,7 +836,7 @@ function DiffViewer(props: { api: TuiPluginApi }) {
                             <Separator axis="x" start={showFileTree() ? "edge" : undefined} />
                             <Show
                               when={entry.file.patch}
-                              fallback={<text fg={theme().textMuted}>No patch available for this file.</text>}
+                              fallback={<text fg={theme().textMuted}>Không có patch cho file này.</text>}
                             >
                               {(patch) => (
                                 <box border={patchLeftBorder()} borderColor={theme().border}>
@@ -884,56 +884,56 @@ function DiffViewer(props: { api: TuiPluginApi }) {
           <Show when={switchFocusShortcut()}>
             {(shortcut) => (
               <text fg={theme().text}>
-                {shortcut()} <span style={{ fg: theme().textMuted }}>focus file tree</span>
+                {shortcut()} <span style={{ fg: theme().textMuted }}>chuyển tiêu điểm cây file</span>
               </text>
             )}
           </Show>
           <Show when={nextFileShortcut()}>
             {(shortcut) => (
               <text fg={theme().text}>
-                {shortcut()} <span style={{ fg: theme().textMuted }}>next file</span>
+                {shortcut()} <span style={{ fg: theme().textMuted }}>file kế tiếp</span>
               </text>
             )}
           </Show>
           <Show when={nextHunkShortcut()}>
             {(shortcut) => (
               <text fg={theme().text}>
-                {shortcut()} <span style={{ fg: theme().textMuted }}>next hunk</span>
+                {shortcut()} <span style={{ fg: theme().textMuted }}>hunk kế tiếp</span>
               </text>
             )}
           </Show>
           <Show when={previousHunkShortcut()}>
             {(shortcut) => (
               <text fg={theme().text}>
-                {shortcut()} <span style={{ fg: theme().textMuted }}>previous hunk</span>
+                {shortcut()} <span style={{ fg: theme().textMuted }}>hunk trước</span>
               </text>
             )}
           </Show>
           <Show when={previousFileShortcut()}>
             {(shortcut) => (
               <text fg={theme().text}>
-                {shortcut()} <span style={{ fg: theme().textMuted }}>previous file</span>
+                {shortcut()} <span style={{ fg: theme().textMuted }}>file trước</span>
               </text>
             )}
           </Show>
           <Show when={switchSourceShortcut()}>
             {(shortcut) => (
               <text fg={theme().text}>
-                {shortcut()} <span style={{ fg: theme().textMuted }}>switch source</span>
+                {shortcut()} <span style={{ fg: theme().textMuted }}>đổi nguồn</span>
               </text>
             )}
           </Show>
           <Show when={markReviewedShortcut()}>
             {(shortcut) => (
               <text fg={theme().text}>
-                {shortcut()} <span style={{ fg: theme().textMuted }}>mark reviewed</span>
+                {shortcut()} <span style={{ fg: theme().textMuted }}>đánh dấu đã xem</span>
               </text>
             )}
           </Show>
           <Show when={helpShortcut()}>
             {(shortcut) => (
               <text fg={theme().text}>
-                {shortcut()} <span style={{ fg: theme().textMuted }}>all</span>
+                {shortcut()} <span style={{ fg: theme().textMuted }}>tất cả</span>
               </text>
             )}
           </Show>
@@ -948,63 +948,63 @@ function DiffViewerHelpDialog() {
   const rows = [
     {
       shortcut: () => "q",
-      action: "Close viewer",
-      description: "Quit the diff viewer",
+      action: "Đóng trình xem",
+      description: "Thoát trình xem Diff",
     },
     {
       shortcut: useCommandShortcut("diff.switch_focus"),
-      action: "Focus file tree",
-      description: "Move keyboard focus between the file tree and patch pane",
+      action: "Chuyển tiêu điểm cây file",
+      description: "Di chuyển tiêu điểm bàn phím giữa cây file và khung patch",
     },
     {
       shortcut: useCommandShortcut("diff.next_hunk"),
-      action: "Next hunk",
-      description: "Jump to the next diff hunk",
+      action: "Hunk kế tiếp",
+      description: "Nhảy đến hunk Diff kế tiếp",
     },
     {
       shortcut: useCommandShortcut("diff.previous_hunk"),
-      action: "Previous hunk",
-      description: "Jump to the previous diff hunk",
+      action: "Hunk trước",
+      description: "Nhảy đến hunk Diff trước",
     },
     {
       shortcut: useCommandShortcut("diff.next_file"),
-      action: "Next file",
-      description: "Select the next changed file in file-tree order",
+      action: "File kế tiếp",
+      description: "Chọn file thay đổi kế tiếp theo thứ tự cây file",
     },
     {
       shortcut: useCommandShortcut("diff.previous_file"),
-      action: "Previous file",
-      description: "Select the previous changed file in file-tree order",
+      action: "File trước",
+      description: "Chọn file thay đổi trước đó theo thứ tự cây file",
     },
     {
       shortcut: useCommandShortcut("diff.toggle_file_tree"),
-      action: "Toggle file tree",
-      description: "Show or hide the file tree sidebar",
+      action: "Bật/tắt cây file",
+      description: "Hiện hoặc ẩn thanh bên cây file",
     },
     {
       shortcut: useCommandShortcut("diff.single_patch"),
-      action: "Toggle patches",
-      description: "Switch between one selected patch and all patches",
+      action: "Bật/tắt patch",
+      description: "Chuyển giữa một patch đang chọn và tất cả patch",
     },
     {
       shortcut: useCommandShortcut("diff.switch_source"),
-      action: "Switch source",
-      description: "Choose working tree, main branch, or last-turn changes",
+      action: "Đổi nguồn",
+      description: "Chọn working tree, nhánh main, hoặc thay đổi lượt trước",
     },
     {
       shortcut: useCommandShortcut("diff.toggle_view"),
-      action: "Toggle view",
-      description: "Switch between split and unified diff layout",
+      action: "Bật/tắt chế độ xem",
+      description: "Chuyển giữa bố cục Diff chia đôi và hợp nhất",
     },
     {
       shortcut: useCommandShortcut("diff.expand_all"),
-      action: "Expand all folders",
-      description: "Open every folder in the file tree",
+      action: "Mở rộng tất cả thư mục",
+      description: "Mở mọi thư mục trong cây file",
     },
     {
       shortcut: useCommandShortcut("diff.mark_reviewed"),
-      action: "Mark reviewed",
-      description: "Toggle reviewed state for the selected file",
+      action: "Đánh dấu đã xem",
+      description: "Bật/tắt trạng thái đã xem của file đang chọn",
     },
   ]
 
@@ -1012,18 +1012,18 @@ function DiffViewerHelpDialog() {
     <box paddingLeft={2} paddingRight={2} paddingBottom={1} gap={1}>
       <box flexDirection="row" justifyContent="space-between">
         <text attributes={TextAttributes.BOLD} fg={theme.text}>
-          Diff shortcuts
+          Phím tắt Diff
         </text>
         <text fg={theme.textMuted}>esc</text>
       </box>
       <box flexDirection="row">
         <text fg={theme.textMuted} width={5} wrapMode="none">
-          Key
+          Phím
         </text>
         <text fg={theme.textMuted} width={22} wrapMode="none">
-          Action
+          Hành động
         </text>
-        <text fg={theme.textMuted}>Description</text>
+        <text fg={theme.textMuted}>Mô tả</text>
       </box>
       <For each={rows}>
         {(row) => (
@@ -1054,7 +1054,7 @@ const tui: TuiPlugin = async (api) => {
     commands: [
       {
         name: "diff.open",
-        title: "Open diff viewer",
+        title: "Mở trình xem Diff",
         slashName: "diff",
         category: "VCS",
         namespace: "palette",

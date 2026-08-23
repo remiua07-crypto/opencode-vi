@@ -6,28 +6,28 @@ import { Effect } from "effect"
 const options = {
   port: {
     type: "number" as const,
-    describe: "port to listen on",
+    describe: "cổng để lắng nghe",
     default: 0,
   },
   hostname: {
     type: "string" as const,
-    describe: "hostname to listen on",
+    describe: "hostname để lắng nghe",
     default: "127.0.0.1",
   },
   mdns: {
     type: "boolean" as const,
-    describe: "enable mDNS service discovery (defaults hostname to 0.0.0.0)",
+    describe: "bật khám phá dịch vụ mDNS (mặc định hostname thành 0.0.0.0)",
     default: false,
   },
   "mdns-domain": {
     type: "string" as const,
-    describe: "custom domain name for mDNS service (default: opencode.local)",
+    describe: "tên miền tùy chỉnh cho dịch vụ mDNS (mặc định: opencode.local)",
     default: "opencode.local",
   },
   cors: {
     type: "string" as const,
     array: true,
-    describe: "additional domains to allow for CORS",
+    describe: "các tên miền bổ sung được phép cho CORS",
     default: [] as string[],
   },
 }

@@ -18,7 +18,7 @@ import { V2Command } from "./v2"
 
 export const DebugCommand = cmd({
   command: "debug",
-  describe: "debugging and troubleshooting tools",
+  describe: "công cụ gỡ lỗi và xử lý sự cố",
   builder: (yargs) =>
     yargs
       .command(ConfigCommand)
@@ -40,7 +40,7 @@ export const DebugCommand = cmd({
 
 const WaitCommand = effectCmd({
   command: "wait",
-  describe: "wait indefinitely (for debugging)",
+  describe: "chờ vô thời hạn (để gỡ lỗi)",
   handler: Effect.fn("Cli.debug.wait")(function* () {
     yield* Effect.sleep(Duration.days(1))
   }),
@@ -48,7 +48,7 @@ const WaitCommand = effectCmd({
 
 const InfoCommand = effectCmd({
   command: "info",
-  describe: "show debug information",
+  describe: "hiển thị thông tin gỡ lỗi",
   handler: Effect.fn("Cli.debug.info")(function* () {
     const { Config } = yield* Effect.promise(() => import("@/config/config"))
     const { ConfigPlugin } = yield* Effect.promise(() => import("@/config/plugin"))
@@ -60,14 +60,14 @@ const InfoCommand = effectCmd({
 
     console.log(`opencode version: ${InstallationVersion}`)
     console.log(`os: ${os.type()} ${os.release()} ${os.arch()}`)
-    console.log(`terminal: ${terminal || "unknown"}`)
+    console.log(`terminal: ${terminal || "không rõ"}`)
     console.log("plugins:")
     if (Flag.OPENCODE_PURE) {
-      console.log("external plugins disabled (--pure)")
+      console.log("đã tắt plugin bên ngoài (--pure)")
       return
     }
     if (!config.plugin_origins?.length) {
-      console.log("none")
+      console.log("không có")
       return
     }
     for (const plugin of config.plugin_origins) {
@@ -78,7 +78,7 @@ const InfoCommand = effectCmd({
 
 const PathsCommand = cmd({
   command: "paths",
-  describe: "show global paths (data, config, cache, state)",
+  describe: "hiển thị các đường dẫn toàn cục (data, config, cache, state)",
   handler() {
     for (const [key, value] of Object.entries(Global.Path)) {
       console.log(key.padEnd(10), value)

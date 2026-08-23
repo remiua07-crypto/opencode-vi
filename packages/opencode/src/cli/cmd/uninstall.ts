@@ -24,30 +24,30 @@ interface RemovalTargets {
 
 export const UninstallCommand = {
   command: "uninstall",
-  describe: "uninstall opencode and remove all related files",
+  describe: "gỡ cài đặt opencode và xóa tất cả tệp liên quan",
   builder: (yargs: Argv) =>
     yargs
       .option("keep-config", {
         alias: "c",
         type: "boolean",
-        describe: "keep configuration files",
+        describe: "giữ lại các tệp cấu hình",
         default: false,
       })
       .option("keep-data", {
         alias: "d",
         type: "boolean",
-        describe: "keep session data and snapshots",
+        describe: "giữ lại dữ liệu session và snapshot",
         default: false,
       })
       .option("dry-run", {
         type: "boolean",
-        describe: "show what would be removed without removing",
+        describe: "hiển thị những gì sẽ bị xóa mà không thực hiện xóa",
         default: false,
       })
       .option("force", {
         alias: "f",
         type: "boolean",
-        describe: "skip confirmation prompts",
+        describe: "bỏ qua các bước xác nhận",
         default: false,
       }),
 
@@ -55,10 +55,10 @@ export const UninstallCommand = {
     UI.empty()
     UI.println(UI.logo("  "))
     UI.empty()
-    prompts.intro("Uninstall OpenCode")
+    prompts.intro("Gỡ cài đặt OpenCode")
 
     const method = await Installation.method()
-    prompts.log.info(`Installation method: ${method}`)
+    prompts.log.info(`Phương thức cài đặt: ${method}`)
 
     const targets = await collectRemovalTargets(args, method)
 
@@ -66,24 +66,24 @@ export const UninstallCommand = {
 
     if (!args.force && !args.dryRun) {
       const confirm = await prompts.confirm({
-        message: "Are you sure you want to uninstall?",
+        message: "Bạn có chắc chắn muốn gỡ cài đặt không?",
         initialValue: false,
       })
       if (!confirm || prompts.isCancel(confirm)) {
-        prompts.outro("Cancelled")
+        prompts.outro("Đã hủy")
         return
       }
     }
 
     if (args.dryRun) {
-      prompts.log.warn("Dry run - no changes made")
-      prompts.outro("Done")
+      prompts.log.warn("Chạy thử (dry run) - không có thay đổi nào được thực hiện")
+      prompts.outro("Hoàn tất")
       return
     }
 
     await executeUninstall(method, targets)
 
-    prompts.outro("Done")
+    prompts.outro("Hoàn tất")
   },
 }
 
@@ -102,7 +102,7 @@ async function collectRemovalTargets(args: UninstallArgs, method: Installation.M
 }
 
 async function showRemovalSummary(targets: RemovalTargets, method: Installation.Method) {
-  prompts.log.message("The following will be removed:")
+  prompts.log.message("Những thứ sau đây sẽ bị xóa:")
 
   for (const dir of targets.directories) {
     const exists = await fs
@@ -113,7 +113,7 @@ async function showRemovalSummary(targets: RemovalTargets, method: Installation.
 
     const size = await getDirectorySize(dir.path)
     const sizeStr = formatSize(size)
-    const status = dir.keep ? UI.Style.TEXT_DIM + "(keeping)" : ""
+    const status = dir.keep ? UI.Style.TEXT_DIM + "(giữ lại)" : ""
     const prefix = dir.keep ? "○" : "✓"
 
     prompts.log.info(`  ${prefix} ${dir.label}: ${shortenPath(dir.path)} ${UI.Style.TEXT_DIM}(${sizeStr})${status}`)
@@ -124,7 +124,7 @@ async function showRemovalSummary(targets: RemovalTargets, method: Installation.
   }
 
   if (targets.shellConfig) {
-    prompts.log.info(`  ✓ Shell PATH in ${shortenPath(targets.shellConfig)}`)
+    prompts.log.info(`  ✓ Shell PATH trong ${shortenPath(targets.shellConfig)}`)
   }
 
   if (method !== "curl" && method !== "unknown") {
@@ -147,7 +147,7 @@ async function executeUninstall(method: Installation.Method, targets: RemovalTar
 
   for (const dir of targets.directories) {
     if (dir.keep) {
-      prompts.log.step(`Skipping ${dir.label} (--keep-${dir.label.toLowerCase()})`)
+      prompts.log.step(`Bỏ qua ${dir.label} (--keep-${dir.label.toLowerCase()})`)
       continue
     }
 
@@ -157,24 +157,24 @@ async function executeUninstall(method: Installation.Method, targets: RemovalTar
       .catch(() => false)
     if (!exists) continue
 
-    spinner.start(`Removing ${dir.label}...`)
+    spinner.start(`Đang xóa ${dir.label}...`)
     const err = await fs.rm(dir.path, { recursive: true, force: true }).catch((e) => e)
     if (err) {
-      spinner.stop(`Failed to remove ${dir.label}`, 1)
+      spinner.stop(`Không thể xóa ${dir.label}`, 1)
       errors.push(`${dir.label}: ${err.message}`)
       continue
     }
-    spinner.stop(`Removed ${dir.label}`)
+    spinner.stop(`Đã xóa ${dir.label}`)
   }
 
   if (targets.shellConfig) {
-    spinner.start("Cleaning shell config...")
+    spinner.start("Đang dọn dẹp cấu hình shell...")
     const err = await cleanShellConfig(targets.shellConfig).catch((e) => e)
     if (err) {
-      spinner.stop("Failed to clean shell config", 1)
+      spinner.stop("Không thể dọn dẹp cấu hình shell", 1)
       errors.push(`Shell config: ${err.message}`)
     } else {
-      spinner.stop("Cleaned shell config")
+      spinner.stop("Đã dọn dẹp cấu hình shell")
     }
   }
 
@@ -191,27 +191,27 @@ async function executeUninstall(method: Installation.Method, targets: RemovalTar
 
     const cmd = cmds[method]
     if (cmd) {
-      spinner.start(`Running ${cmd.join(" ")}...`)
+      spinner.start(`Đang chạy ${cmd.join(" ")}...`)
       const result = await Process.run(method === "choco" ? ["choco", "uninstall", "opencode", "-y", "-r"] : cmd, {
         nothrow: true,
       })
       if (result.code !== 0) {
-        spinner.stop(`Package manager uninstall failed: exit code ${result.code}`, 1)
+        spinner.stop(`Gỡ cài đặt qua trình quản lý gói thất bại: mã thoát ${result.code}`, 1)
         const text = `${result.stdout.toString("utf8")}\n${result.stderr.toString("utf8")}`
         if (method === "choco" && text.includes("not running from an elevated command shell")) {
-          prompts.log.warn(`You may need to run '${cmd.join(" ")}' from an elevated command shell`)
+          prompts.log.warn(`Bạn có thể cần chạy '${cmd.join(" ")}' từ shell có quyền cao hơn`)
         } else {
-          prompts.log.warn(`You may need to run manually: ${cmd.join(" ")}`)
+          prompts.log.warn(`Bạn có thể cần chạy thủ công: ${cmd.join(" ")}`)
         }
       } else {
-        spinner.stop("Package removed")
+        spinner.stop("Đã gỡ package")
       }
     }
   }
 
   if (method === "curl" && targets.binary) {
     UI.empty()
-    prompts.log.message("To finish removing the binary, run:")
+    prompts.log.message("Để hoàn tất việc xóa binary, hãy chạy:")
     prompts.log.info(`  rm "${targets.binary}"`)
 
     const binDir = path.dirname(targets.binary)
@@ -222,14 +222,14 @@ async function executeUninstall(method: Installation.Method, targets: RemovalTar
 
   if (errors.length > 0) {
     UI.empty()
-    prompts.log.warn("Some operations failed:")
+    prompts.log.warn("Một số thao tác thất bại:")
     for (const err of errors) {
       prompts.log.error(`  ${err}`)
     }
   }
 
   UI.empty()
-  prompts.log.success("Thank you for using OpenCode!")
+  prompts.log.success("Cảm ơn bạn đã sử dụng OpenCode!")
 }
 
 async function getShellConfigFile(): Promise<string | null> {

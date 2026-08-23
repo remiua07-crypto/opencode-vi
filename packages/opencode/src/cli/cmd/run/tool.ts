@@ -202,10 +202,10 @@ function span(state: ToolDict): string {
 function fail(ctx: ToolFrame): string {
   const error = toolError(ctx)
   if (error) {
-    return `✖ ${ctx.name} failed: ${error}`
+    return `✖ ${ctx.name} thất bại: ${error}`
   }
 
-  return `✖ ${ctx.name} failed`
+  return `✖ ${ctx.name} thất bại`
 }
 
 function toolError(ctx: ToolFrame): string {
@@ -241,10 +241,10 @@ function fallbackFinal(ctx: ToolFrame): string {
 
   const time = span(ctx.state)
   if (!time) {
-    return `${ctx.name} completed`
+    return `${ctx.name} hoàn tất`
   }
 
-  return `${ctx.name} completed · ${time}`
+  return `${ctx.name} hoàn tất · ${time}`
 }
 
 export function toolPath(input?: string, opts: { home?: boolean } = {}): string {
@@ -273,7 +273,7 @@ export function toolPath(input?: string, opts: { home?: boolean } = {}): string 
 }
 
 function fallbackInline(ctx: ToolFrame): ToolInline {
-  const title = text(ctx.state.title) || (Object.keys(ctx.input).length > 0 ? JSON.stringify(ctx.input) : "Unknown")
+  const title = text(ctx.state.title) || (Object.keys(ctx.input).length > 0 ? JSON.stringify(ctx.input) : "Không rõ")
 
   return {
     icon: "⚙",
@@ -282,7 +282,7 @@ function fallbackInline(ctx: ToolFrame): ToolInline {
 }
 
 function count(n: number, label: string): string {
-  return `${n} ${label}${n === 1 ? "" : "es"}`
+  return `${n} ${label}`
 }
 
 function runGlob(p: ToolProps<typeof GlobTool>): ToolInline {
@@ -290,7 +290,7 @@ function runGlob(p: ToolProps<typeof GlobTool>): ToolInline {
   const title = `Glob "${p.input.pattern ?? ""}"`
   const suffix = root ? `in ${toolPath(root)}` : ""
   const matches = p.metadata.count
-  const description = matches === undefined ? suffix : `${suffix}${suffix ? " · " : ""}${count(matches, "match")}`
+  const description = matches === undefined ? suffix : `${suffix}${suffix ? " · " : ""}${count(matches, "kết quả")}`
   return {
     icon: "✱",
     title,
@@ -303,7 +303,7 @@ function runGrep(p: ToolProps<typeof GrepTool>): ToolInline {
   const title = `Grep "${p.input.pattern ?? ""}"`
   const suffix = root ? `in ${toolPath(root)}` : ""
   const matches = p.metadata.matches
-  const description = matches === undefined ? suffix : `${suffix}${suffix ? " · " : ""}${count(matches, "match")}`
+  const description = matches === undefined ? suffix : `${suffix}${suffix ? " · " : ""}${count(matches, "kết quả")}`
   return {
     icon: "✱",
     title,
@@ -419,14 +419,14 @@ function runQuestion(p: ToolProps<typeof QuestionTool>): ToolInline {
   const total = list(p.frame.input.questions).length
   return {
     icon: "→",
-    title: `Asked ${total} question${total === 1 ? "" : "s"}`,
+    title: `Đã hỏi ${total} câu hỏi`,
   }
 }
 
 function runInvalid(p: ToolProps<typeof InvalidTool>): ToolInline {
   return {
     icon: "✗",
-    title: text(p.frame.state.title) || "Invalid Tool",
+    title: text(p.frame.state.title) || "Tool không hợp lệ",
     mode: "block",
     body: p.frame.status === "completed" ? text(p.frame.state.output) : undefined,
   }
@@ -473,7 +473,7 @@ function runLsp(p: ToolProps<typeof LspTool>): ToolInline {
 function runPlanExit(p: ToolProps<typeof PlanExitTool>): ToolInline {
   return {
     icon: "→",
-    title: text(p.frame.state.title) || "Switching to build agent",
+    title: text(p.frame.state.title) || "Chuyển sang agent build",
     mode: "block",
     body: p.frame.status === "completed" ? text(p.frame.state.output) : undefined,
   }
@@ -675,13 +675,13 @@ function scrollBashFinal(p: ToolProps<typeof BashTool>): string {
   const time = span(p.frame.state)
   if (code === undefined) {
     if (!time) {
-      return "bash completed"
+      return "bash hoàn tất"
     }
 
-    return `bash completed · ${time}`
+    return `bash hoàn tất · ${time}`
   }
 
-  return `bash completed (exit ${code})${time ? ` · ${time}` : ""}`
+  return `bash hoàn tất (exit ${code})${time ? ` · ${time}` : ""}`
 }
 
 function scrollReadStart(p: ToolProps<typeof ReadTool>): string {
@@ -742,7 +742,7 @@ function scrollPatchFinal(p: ToolProps<typeof ApplyPatchTool>): string {
   const shown = files.filter((file) => show_updates || file.type !== "update")
   const rows = shown.slice(0, 6).map(patchLine)
   if (shown.length > 6) {
-    rows.push(`... and ${shown.length - 6} more`)
+    rows.push(`... và ${shown.length - 6} mục nữa`)
   }
 
   if (rows.length > 0) {
@@ -797,24 +797,24 @@ function scrollTodoFinal(p: ToolProps<typeof TodoWriteTool>): string {
   const time = span(p.frame.state)
   if (items.length === 0) {
     if (!time) {
-      return "0 todos"
+      return "0 todo"
     }
 
-    return `0 todos · ${time}`
+    return `0 todo · ${time}`
   }
 
   const doneN = items.filter((item) => item.status === "completed").length
   const runN = items.filter((item) => item.status === "in_progress").length
   const left = items.length - doneN - runN
-  const tail = [`${items.length} total`]
+  const tail = [`${items.length} tổng cộng`]
   if (doneN > 0) {
-    tail.push(`${doneN} done`)
+    tail.push(`${doneN} hoàn thành`)
   }
   if (runN > 0) {
-    tail.push(`${runN} active`)
+    tail.push(`${runN} đang chạy`)
   }
   if (left > 0) {
-    tail.push(`${left} pending`)
+    tail.push(`${left} còn lại`)
   }
 
   if (time) {
@@ -834,22 +834,22 @@ function scrollQuestionFinal(p: ToolProps<typeof QuestionTool>): string {
   const time = span(p.frame.state)
   if (q.length === 0) {
     if (!time) {
-      return "0 questions"
+      return "0 câu hỏi"
     }
 
-    return `0 questions · ${time}`
+    return `0 câu hỏi · ${time}`
   }
 
   const rows: string[] = []
   for (const [i, item] of q.slice(0, 4).entries()) {
     const prompt = item.question
     const reply = a[i] ?? []
-    rows.push(`? ${prompt || `Question ${i + 1}`}`)
-    rows.push(`  ${reply.length > 0 ? reply.join(", ") : "(no answer)"}`)
+    rows.push(`? ${prompt || `Câu hỏi ${i + 1}`}`)
+    rows.push(`  ${reply.length > 0 ? reply.join(", ") : "(không có câu trả lời)"}`)
   }
 
   if (q.length > 4) {
-    rows.push(`... and ${q.length - 4} more`)
+    rows.push(`... và ${q.length - 4} câu nữa`)
   }
 
   return rows.join("\n")

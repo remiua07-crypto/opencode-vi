@@ -133,11 +133,11 @@ export async function runPromptQueue(input: QueueInput): Promise<void> {
                 {
                   type: "stream.patch",
                   patch: {
-                    status: "new sessions unavailable",
+                    status: "không thể tạo session mới",
                   },
                 },
                 {
-                  status: "new sessions unavailable",
+                  status: "không thể tạo session mới",
                 },
               )
               continue
@@ -148,13 +148,13 @@ export async function runPromptQueue(input: QueueInput): Promise<void> {
                 type: "stream.patch",
                 patch: {
                   phase: "running",
-                  status: "starting new session",
+                  status: "đang tạo session mới",
                   queue: state.queue.length,
                 },
               },
               {
                 phase: "running",
-                status: "starting new session",
+                status: "đang tạo session mới",
                 queue: state.queue.length,
               },
             )
@@ -178,7 +178,7 @@ export async function runPromptQueue(input: QueueInput): Promise<void> {
             },
             {
               phase: "running",
-              status: "sending prompt",
+              status: "đang gửi prompt",
               queue: state.queue.length,
             },
           )

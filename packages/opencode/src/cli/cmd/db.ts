@@ -7,19 +7,19 @@ import { effectCmd } from "../effect-cmd"
 
 const QueryCommand = effectCmd({
   command: "$0 [query]",
-  describe: "open an interactive sqlite3 shell or run a query",
+  describe: "mở shell sqlite3 tương tác hoặc chạy một truy vấn",
   instance: false,
   builder: (yargs: Argv) => {
     return yargs
       .positional("query", {
         type: "string",
-        describe: "SQL query to execute",
+        describe: "Truy vấn SQL cần thực thi",
       })
       .option("format", {
         type: "string",
         choices: ["json", "tsv"],
         default: "tsv",
-        describe: "Output format",
+        describe: "Định dạng đầu ra",
       })
   },
   handler: Effect.fn("Cli.db.query")(function* (args: { query?: string; format: string }) {
@@ -44,7 +44,7 @@ const QueryCommand = effectCmd({
 
 const PathCommand = effectCmd({
   command: "path",
-  describe: "print the database path",
+  describe: "in đường dẫn cơ sở dữ liệu",
   instance: false,
   handler: Effect.fn("Cli.db.path")(function* () {
     console.log(Database.path())
@@ -53,7 +53,7 @@ const PathCommand = effectCmd({
 
 export const DbCommand = effectCmd({
   command: "db",
-  describe: "database tools",
+  describe: "công cụ cơ sở dữ liệu",
   instance: false,
   builder: (yargs: Argv) => {
     return yargs.command(QueryCommand).command(PathCommand).demandCommand()

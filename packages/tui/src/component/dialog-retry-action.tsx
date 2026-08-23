@@ -48,25 +48,25 @@ export function DialogRetryAction(props: DialogRetryActionProps) {
     bindings: [
       {
         key: "left",
-        desc: "Previous retry option",
+        desc: "Tùy chọn thử lại trước",
         group: "Dialog",
         cmd: () => setSelected((value) => (value === "action" ? "dismiss" : "action")),
       },
       {
         key: "right",
-        desc: "Next retry option",
+        desc: "Tùy chọn thử lại tiếp theo",
         group: "Dialog",
         cmd: () => setSelected((value) => (value === "action" ? "dismiss" : "action")),
       },
       {
         key: "tab",
-        desc: "Next retry option",
+        desc: "Tùy chọn thử lại tiếp theo",
         group: "Dialog",
         cmd: () => setSelected((value) => (value === "action" ? "dismiss" : "action")),
       },
       {
         key: "return",
-        desc: "Confirm retry option",
+        desc: "Xác nhận tùy chọn thử lại",
         group: "Dialog",
         cmd: () => {
           if (selected() === "action") runAction(props, dialog)
@@ -123,7 +123,7 @@ export function DialogRetryAction(props: DialogRetryActionProps) {
               bg={selected() === "dismiss" ? undefined : textBg()}
               attributes={selected() === "dismiss" ? TextAttributes.BOLD : undefined}
             >
-              don't show again
+              không hiện lại
             </text>
           </box>
           <box

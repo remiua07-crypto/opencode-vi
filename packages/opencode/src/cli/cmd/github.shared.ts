@@ -24,7 +24,7 @@ export function extractResponseText(parts: SessionV1.Part[]): string | null {
 export function formatPromptTooLargeError(files: { filename: string; content: string }[]): string {
   const fileDetails =
     files.length > 0
-      ? `\n\nFiles in prompt:\n${files.map((f) => `  - ${f.filename} (${((f.content.length * 0.75) / 1024).toFixed(0)} KB)`).join("\n")}`
+      ? `\n\nCác tệp trong prompt:\n${files.map((f) => `  - ${f.filename} (${((f.content.length * 0.75) / 1024).toFixed(0)} KB)`).join("\n")}`
       : ""
   return `PROMPT_TOO_LARGE: The prompt exceeds the model's context limit.${fileDetails}`
 }

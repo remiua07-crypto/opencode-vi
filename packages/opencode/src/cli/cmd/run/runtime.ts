@@ -105,7 +105,7 @@ function createSessionResolver(fn?: CreateSession) {
   return async (ctx: BootContext, input: CreateSessionInput): Promise<ResolvedSession> => {
     const created = await fn(ctx.sdk, input)
     if (!created.id) {
-      throw new Error("Failed to create session")
+      throw new Error("Không thể tạo session")
     }
 
     return {
@@ -269,14 +269,14 @@ async function runInteractiveRuntime(input: RunRuntimeInput, deps: RunRuntimeDep
     onCycleVariant: () => {
       if (!state.model || state.variants.length === 0) {
         return {
-          status: "no variants available",
+          status: "không có variant khả dụng",
         }
       }
 
       state.activeVariant = cycleVariant(state.activeVariant, state.variants)
       saveVariant(state.model, state.activeVariant)
       return {
-        status: state.activeVariant ? `variant ${state.activeVariant}` : "variant default",
+        status: state.activeVariant ? `variant ${state.activeVariant}` : "variant mặc định",
         modelLabel: formatModelLabel(state.model, state.activeVariant, state.providers),
         variant: state.activeVariant,
       }
@@ -318,7 +318,7 @@ async function runInteractiveRuntime(input: RunRuntimeInput, deps: RunRuntimeDep
     onVariantSelect: async (variant) => {
       if (!state.model || state.variants.length === 0) {
         return {
-          status: "no variants available",
+          status: "không có variant khả dụng",
         }
       }
 
@@ -331,7 +331,7 @@ async function runInteractiveRuntime(input: RunRuntimeInput, deps: RunRuntimeDep
       state.activeVariant = variant
       saveVariant(state.model, state.activeVariant)
       return {
-        status: state.activeVariant ? `variant ${state.activeVariant}` : "variant default",
+        status: state.activeVariant ? `variant ${state.activeVariant}` : "variant mặc định",
         modelLabel: formatModelLabel(state.model, state.activeVariant, state.providers),
         variant: state.activeVariant,
         variants: state.variants,
@@ -464,12 +464,12 @@ async function runInteractiveRuntime(input: RunRuntimeInput, deps: RunRuntimeDep
     const next = (async () => {
       await ensureSession()
       if (footer.isClosed) {
-        throw new Error("runtime closed")
+        throw new Error("runtime đã đóng")
       }
 
       const mod = await streamTask
       if (footer.isClosed) {
-        throw new Error("runtime closed")
+        throw new Error("runtime đã đóng")
       }
 
       const handle = await mod.createSessionTransport({
@@ -486,7 +486,7 @@ async function runInteractiveRuntime(input: RunRuntimeInput, deps: RunRuntimeDep
       })
       if (footer.isClosed) {
         await handle.close()
-        throw new Error("runtime closed")
+        throw new Error("runtime đã đóng")
       }
 
       state.selectSubagent = (sessionID) => handle.selectSubagent(sessionID)
@@ -612,7 +612,7 @@ async function runInteractiveRuntime(input: RunRuntimeInput, deps: RunRuntimeDep
               })
               footer.append({
                 kind: "system",
-                text: `new session ${state.sessionID}`,
+                text: `session mới ${state.sessionID}`,
                 phase: "final",
                 source: "system",
               })
@@ -622,7 +622,7 @@ async function runInteractiveRuntime(input: RunRuntimeInput, deps: RunRuntimeDep
                 type: "stream.patch",
                 patch: {
                   phase: "idle",
-                  status: "failed to start new session",
+                  status: "không thể bắt đầu session mới",
                 },
               })
               const commit = {
@@ -755,7 +755,7 @@ export async function runInteractiveLocalMode(input: RunLocalInput): Promise<voi
 
       session = Promise.all([input.resolveAgent(), input.session(sdk)]).then(([agent, next]) => {
         if (!next?.id) {
-          throw new Error("Session not found")
+          throw new Error("Không tìm thấy session")
         }
 
         void input.share(sdk, next.id).catch(() => {})

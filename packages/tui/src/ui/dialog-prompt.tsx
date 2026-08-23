@@ -38,7 +38,7 @@ export function DialogPrompt(props: DialogPromptProps) {
     commands: [
       {
         name: "dialog.prompt.submit",
-        title: "Submit dialog prompt",
+        title: "Gửi hộp thoại nhập",
         category: "Dialog",
         run: confirm,
       },
@@ -91,7 +91,7 @@ export function DialogPrompt(props: DialogPromptProps) {
             setTextareaTarget(val)
           }}
           initialValue={props.value}
-          placeholder={props.placeholder ?? "Enter text"}
+          placeholder={props.placeholder ?? "Nhập văn bản"}
           placeholderColor={theme.textMuted}
           textColor={props.busy ? theme.textMuted : theme.text}
           focusedTextColor={props.busy ? theme.textMuted : theme.text}
@@ -99,14 +99,14 @@ export function DialogPrompt(props: DialogPromptProps) {
           cursorStyle={tuiConfig.cursor}
         />
         <Show when={props.busy}>
-          <Spinner color={theme.textMuted}>{props.busyText ?? "Working..."}</Spinner>
+          <Spinner color={theme.textMuted}>{props.busyText ?? "Đang xử lý..."}</Spinner>
         </Show>
       </box>
       <box paddingBottom={1} gap={1} flexDirection="row">
-        <Show when={!props.busy} fallback={<text fg={theme.textMuted}>processing...</text>}>
+        <Show when={!props.busy} fallback={<text fg={theme.textMuted}>đang xử lý...</text>}>
           <Show when={submitShortcut()}>
             <text fg={theme.text}>
-              {submitShortcut()} <span style={{ fg: theme.textMuted }}>submit</span>
+              {submitShortcut()} <span style={{ fg: theme.textMuted }}>gửi</span>
             </text>
           </Show>
         </Show>
