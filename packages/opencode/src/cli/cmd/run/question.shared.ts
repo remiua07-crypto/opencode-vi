@@ -320,21 +320,21 @@ export function questionReject(request: QuestionRequest): QuestionReject {
 
 export function questionHint(request: QuestionRequest, state: QuestionBodyState): string {
   if (state.submitting) {
-    return "Waiting for question event..."
+    return "Đang chờ sự kiện câu hỏi..."
   }
 
   if (questionConfirm(request, state)) {
-    return "enter submit   esc dismiss"
+    return "enter gửi   esc bỏ qua"
   }
 
   if (state.editing) {
-    return "enter save   esc cancel"
+    return "enter lưu   esc hủy"
   }
 
   const info = questionInfo(request, state)
   if (questionSingle(request)) {
-    return `↑↓ select   enter ${info?.multiple ? "toggle" : "submit"}   esc dismiss`
+    return `↑↓ chọn   enter ${info?.multiple ? "chọn nhiều" : "gửi"}   esc bỏ qua`
   }
 
-  return `⇆ tab   ↑↓ select   enter ${info?.multiple ? "toggle" : "confirm"}   esc dismiss`
+  return `⇆ tab   ↑↓ chọn   enter ${info?.multiple ? "chọn nhiều" : "xác nhận"}   esc bỏ qua`
 }

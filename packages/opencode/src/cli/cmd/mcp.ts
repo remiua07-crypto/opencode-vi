@@ -35,11 +35,11 @@ function getAuthStatusIcon(status: MCP.AuthStatus): string {
 function getAuthStatusText(status: MCP.AuthStatus): string {
   switch (status) {
     case "authenticated":
-      return "authenticated"
+      return "đã xác thực"
     case "expired":
-      return "expired"
+      return "hết hạn"
     case "not_authenticated":
-      return "not authenticated"
+      return "chưa xác thực"
   }
 }
 
@@ -94,7 +94,7 @@ function authState() {
 
 export const McpCommand = cmd({
   command: "mcp",
-  describe: "manage MCP (Model Context Protocol) servers",
+  describe: "quản lý máy chủ MCP (Model Context Protocol)",
   builder: (yargs) =>
     yargs
       .command(McpAddCommand)
@@ -109,17 +109,17 @@ export const McpCommand = cmd({
 export const McpListCommand = effectCmd({
   command: "list",
   aliases: ["ls"],
-  describe: "list MCP servers and their status",
+  describe: "liệt kê máy chủ MCP và trạng thái của chúng",
   handler: Effect.fn("Cli.mcp.list")(function* () {
     UI.empty()
-    prompts.intro("MCP Servers")
+    prompts.intro("Máy chủ MCP")
 
     const { config, statuses, stored } = yield* listState()
     const servers = configuredServers(config)
 
     if (servers.length === 0) {
-      prompts.log.warn("No MCP servers configured")
-      prompts.outro("Add servers with: opencode mcp add")
+      prompts.log.warn("Chưa cấu hình máy chủ MCP nào")
+      prompts.outro("Thêm máy chủ bằng: opencode mcp add")
       return
     }
 
@@ -134,26 +134,26 @@ export const McpListCommand = effectCmd({
 
       if (!status) {
         statusIcon = "○"
-        statusText = "not initialized"
+        statusText = "chưa khởi tạo"
       } else if (status.status === "connected") {
         statusIcon = "✓"
-        statusText = "connected"
+        statusText = "đã kết nối"
         if (hasOAuth && hasStoredTokens) {
           hint = " (OAuth)"
         }
       } else if (status.status === "disabled") {
         statusIcon = "○"
-        statusText = "disabled"
+        statusText = "bị tắt"
       } else if (status.status === "needs_auth") {
         statusIcon = "⚠"
-        statusText = "needs authentication"
+        statusText = "cần xác thực"
       } else if (status.status === "needs_client_registration") {
         statusIcon = "✗"
-        statusText = "needs client registration"
+        statusText = "cần đăng ký client"
         hint = "\n    " + status.error
       } else {
         statusIcon = "✗"
-        statusText = "failed"
+        statusText = "thất bại"
         hint = "\n    " + status.error
       }
 
@@ -163,31 +163,31 @@ export const McpListCommand = effectCmd({
       )
     }
 
-    prompts.outro(`${servers.length} server(s)`)
+    prompts.outro(`${servers.length} máy chủ`)
   }),
 })
 
 export const McpAuthCommand = effectCmd({
   command: "auth [name]",
-  describe: "authenticate with an OAuth-enabled MCP server",
+  describe: "xác thực với một máy chủ MCP hỗ trợ OAuth",
   builder: (yargs) =>
     yargs
       .positional("name", {
-        describe: "name of the MCP server",
+        describe: "tên của máy chủ MCP",
         type: "string",
       })
       .command(McpAuthListCommand),
   handler: Effect.fn("Cli.mcp.auth")(function* (args) {
     UI.empty()
-    prompts.intro("MCP OAuth Authentication")
+    prompts.intro("Xác thực OAuth MCP")
 
     const { config, auth } = yield* authState()
     const mcpServers = config.mcp ?? {}
     const servers = oauthServers(config)
 
     if (servers.length === 0) {
-      prompts.log.warn("No OAuth-capable MCP servers configured")
-      prompts.log.info("Remote MCP servers support OAuth by default. Add a remote server in opencode.json:")
+      prompts.log.warn("Chưa cấu hình máy chủ MCP nào hỗ trợ OAuth")
+      prompts.log.info("Máy chủ MCP remote mặc định hỗ trợ OAuth. Thêm một máy chủ remote trong opencode.json:")
       prompts.log.info(`
   "mcp": {
     "my-server": {
@@ -195,7 +195,7 @@ export const McpAuthCommand = effectCmd({
       "url": "https://example.com/mcp"
     }
   }`)
-      prompts.outro("Done")
+      prompts.outro("Hoàn tất")
       return
     }
 
@@ -216,7 +216,7 @@ export const McpAuthCommand = effectCmd({
 
       const selected = yield* Effect.promise(() =>
         prompts.select({
-          message: "Select MCP server to authenticate",
+          message: "Chọn máy chủ MCP cần xác thực",
           options,
         }),
       )
@@ -226,14 +226,14 @@ export const McpAuthCommand = effectCmd({
 
     const serverConfig = mcpServers[serverName]
     if (!serverConfig) {
-      prompts.log.error(`MCP server not found: ${serverName}`)
-      prompts.outro("Done")
+      prompts.log.error(`Không tìm thấy máy chủ MCP: ${serverName}`)
+      prompts.outro("Hoàn tất")
       return
     }
 
     if (!isMcpRemote(serverConfig) || serverConfig.oauth === false) {
-      prompts.log.error(`MCP server ${serverName} is not an OAuth-capable remote server`)
-      prompts.outro("Done")
+      prompts.log.error(`Máy chủ MCP ${serverName} không phải là máy chủ remote hỗ trợ OAuth`)
+      prompts.outro("Hoàn tất")
       return
     }
 
@@ -242,35 +242,35 @@ export const McpAuthCommand = effectCmd({
     if (authStatus === "authenticated") {
       const confirm = yield* Effect.promise(() =>
         prompts.confirm({
-          message: `${serverName} already has valid credentials. Re-authenticate?`,
+          message: `${serverName} đã có thông tin xác thực hợp lệ. Xác thực lại?`,
         }),
       )
       if (prompts.isCancel(confirm) || !confirm) {
-        prompts.outro("Cancelled")
+        prompts.outro("Đã hủy")
         return
       }
     } else if (authStatus === "expired") {
-      prompts.log.warn(`${serverName} has expired credentials. Re-authenticating...`)
+      prompts.log.warn(`Thông tin xác thực của ${serverName} đã hết hạn. Đang xác thực lại...`)
     }
 
     const spinner = prompts.spinner()
-    spinner.start("Starting OAuth flow...")
+    spinner.start("Đang bắt đầu luồng OAuth...")
 
     yield* MCP.Service.use((mcp) =>
       mcp.authenticate(serverName, (url) => {
-        spinner.stop("Authorize in your browser:")
+        spinner.stop("Ủy quyền trong trình duyệt của bạn:")
         prompts.log.info(url)
-        spinner.start("Waiting for authorization...")
+        spinner.start("Đang chờ ủy quyền...")
       }),
     ).pipe(
       Effect.tap((status) =>
         Effect.sync(() => {
           if (status.status === "connected") {
-            spinner.stop("Authentication successful!")
+            spinner.stop("Xác thực thành công!")
           } else if (status.status === "needs_client_registration") {
-            spinner.stop("Authentication failed", 1)
+            spinner.stop("Xác thực thất bại", 1)
             prompts.log.error(status.error)
-            prompts.log.info("Add clientId to your MCP server config:")
+            prompts.log.info("Thêm clientId vào cấu hình máy chủ MCP của bạn:")
             prompts.log.info(`
   "mcp": {
     "${serverName}": {
@@ -283,40 +283,40 @@ export const McpAuthCommand = effectCmd({
     }
   }`)
           } else if (status.status === "failed") {
-            spinner.stop("Authentication failed", 1)
+            spinner.stop("Xác thực thất bại", 1)
             prompts.log.error(status.error)
           } else {
-            spinner.stop("Unexpected status: " + status.status, 1)
+            spinner.stop("Trạng thái không mong đợi: " + status.status, 1)
           }
         }),
       ),
       Effect.catchCause((cause) =>
         Effect.sync(() => {
-          spinner.stop("Authentication failed", 1)
+          spinner.stop("Xác thực thất bại", 1)
           const error = Cause.squash(cause)
           prompts.log.error(error instanceof Error ? error.message : String(error))
         }),
       ),
     )
 
-    prompts.outro("Done")
+    prompts.outro("Hoàn tất")
   }),
 })
 
 export const McpAuthListCommand = effectCmd({
   command: "list",
   aliases: ["ls"],
-  describe: "list OAuth-capable MCP servers and their auth status",
+  describe: "liệt kê các máy chủ MCP hỗ trợ OAuth và trạng thái xác thực",
   handler: Effect.fn("Cli.mcp.auth.list")(function* () {
     UI.empty()
-    prompts.intro("MCP OAuth Status")
+    prompts.intro("Trạng thái OAuth MCP")
 
     const { config, auth } = yield* authState()
     const servers = oauthServers(config)
 
     if (servers.length === 0) {
-      prompts.log.warn("No OAuth-capable MCP servers configured")
-      prompts.outro("Done")
+      prompts.log.warn("Chưa cấu hình máy chủ MCP nào hỗ trợ OAuth")
+      prompts.outro("Hoàn tất")
       return
     }
 
@@ -329,28 +329,28 @@ export const McpAuthListCommand = effectCmd({
       prompts.log.info(`${icon} ${name} ${UI.Style.TEXT_DIM}${statusText}\n    ${UI.Style.TEXT_DIM}${url}`)
     }
 
-    prompts.outro(`${servers.length} OAuth-capable server(s)`)
+    prompts.outro(`${servers.length} máy chủ hỗ trợ OAuth`)
   }),
 })
 
 export const McpLogoutCommand = effectCmd({
   command: "logout [name]",
-  describe: "remove OAuth credentials for an MCP server",
+  describe: "xóa thông tin xác thực OAuth của một máy chủ MCP",
   builder: (yargs) =>
     yargs.positional("name", {
-      describe: "name of the MCP server",
+      describe: "tên của máy chủ MCP",
       type: "string",
     }),
   handler: Effect.fn("Cli.mcp.logout")(function* (args) {
     UI.empty()
-    prompts.intro("MCP OAuth Logout")
+    prompts.intro("Đăng xuất OAuth MCP")
 
     const credentials = yield* McpAuth.Service.use((auth) => auth.all())
     const serverNames = Object.keys(credentials)
 
     if (serverNames.length === 0) {
-      prompts.log.warn("No MCP OAuth credentials stored")
-      prompts.outro("Done")
+      prompts.log.warn("Không có thông tin xác thực OAuth MCP nào được lưu")
+      prompts.outro("Hoàn tất")
       return
     }
 
@@ -358,7 +358,7 @@ export const McpLogoutCommand = effectCmd({
     if (!serverName) {
       const selected = yield* Effect.promise(() =>
         prompts.select({
-          message: "Select MCP server to logout",
+          message: "Chọn máy chủ MCP để đăng xuất",
           options: serverNames.map((name) => {
             const entry = credentials[name]
             const hasTokens = !!entry.tokens
@@ -366,7 +366,7 @@ export const McpLogoutCommand = effectCmd({
             let hint = ""
             if (hasTokens && hasClient) hint = "tokens + client"
             else if (hasTokens) hint = "tokens"
-            else if (hasClient) hint = "client registration"
+            else if (hasClient) hint = "đăng ký client"
             return {
               label: name,
               value: name,
@@ -380,14 +380,14 @@ export const McpLogoutCommand = effectCmd({
     }
 
     if (!credentials[serverName]) {
-      prompts.log.error(`No credentials found for: ${serverName}`)
-      prompts.outro("Done")
+      prompts.log.error(`Không tìm thấy thông tin xác thực cho: ${serverName}`)
+      prompts.outro("Hoàn tất")
       return
     }
 
     yield* MCP.Service.use((mcp) => mcp.removeAuth(serverName))
-    prompts.log.success(`Removed OAuth credentials for ${serverName}`)
-    prompts.outro("Done")
+    prompts.log.success(`Đã xóa thông tin xác thực OAuth của ${serverName}`)
+    prompts.outro("Hoàn tất")
   }),
 })
 
@@ -428,24 +428,24 @@ async function addMcpToConfig(name: string, mcpConfig: ConfigMCPV1.Info, configP
 
 export const McpAddCommand = effectCmd({
   command: "add [name]",
-  describe: "add an MCP server",
+  describe: "thêm một máy chủ MCP",
   builder: (yargs) =>
     yargs
       .positional("name", {
-        describe: "name of the MCP server",
+        describe: "tên của máy chủ MCP",
         type: "string",
       })
       .option("url", {
-        describe: "URL for a remote MCP server",
+        describe: "URL của máy chủ MCP remote",
         type: "string",
       })
       .option("env", {
-        describe: "environment variable for a local MCP server (KEY=VALUE)",
+        describe: "biến môi trường cho máy chủ MCP cục bộ (KEY=VALUE)",
         type: "string",
         array: true,
       })
       .option("header", {
-        describe: "HTTP header for a remote MCP server (KEY=VALUE)",
+        describe: "HTTP header cho máy chủ MCP remote (KEY=VALUE)",
         type: "string",
         array: true,
       }),
@@ -456,31 +456,31 @@ export const McpAddCommand = effectCmd({
     yield* Effect.promise(async () => {
       const command = args["--"] ?? []
       if (!args.name && (args.url || args.env?.length || args.header?.length || command.length)) {
-        throw new Error("A server name is required for non-interactive MCP configuration")
+        throw new Error("Cần tên máy chủ khi cấu hình MCP ở chế độ không tương tác")
       }
       if (args.name) {
         if (!!args.url === !!command.length) {
-          throw new Error("Provide either --url <url> or a command after --")
+          throw new Error("Cung cấp --url <url> hoặc một lệnh sau --")
         }
         if (args.url && !URL.canParse(args.url)) {
-          throw new Error(`Invalid URL: ${args.url}`)
+          throw new Error(`URL không hợp lệ: ${args.url}`)
         }
         if (args.url && args.env?.length) {
-          throw new Error("--env is only valid for local MCP servers")
+          throw new Error("--env chỉ hợp lệ với máy chủ MCP cục bộ")
         }
         if (command.length && args.header?.length) {
-          throw new Error("--header is only valid for remote MCP servers")
+          throw new Error("--header chỉ hợp lệ với máy chủ MCP remote")
         }
 
         const entries = (values: string[], kind: string) =>
           Object.fromEntries(
             values.map((entry) => {
               const index = entry.indexOf("=")
-              if (index < 1) throw new Error(`Invalid ${kind}: ${entry}. Expected KEY=VALUE`)
+              if (index < 1) throw new Error(`${kind} không hợp lệ: ${entry}. Mong muốn KEY=VALUE`)
               return [entry.slice(0, index), entry.slice(index + 1)]
             }),
           )
-        const environment = entries(args.env ?? [], "environment variable")
+        const environment = entries(args.env ?? [], "Biến môi trường")
         const headers = entries(args.header ?? [], "HTTP header")
         const mcpConfig: ConfigMCPV1.Info = args.url
           ? {
@@ -496,12 +496,12 @@ export const McpAddCommand = effectCmd({
 
         const configPath = await resolveConfigPath(Global.Path.config, true)
         await addMcpToConfig(args.name, mcpConfig, configPath)
-        prompts.log.success(`MCP server "${args.name}" added to ${configPath}`)
+        prompts.log.success(`Đã thêm máy chủ MCP "${args.name}" vào ${configPath}`)
         return
       }
 
       UI.empty()
-      prompts.intro("Add MCP server")
+      prompts.intro("Thêm máy chủ MCP")
 
       const project = ctx.project
 
@@ -515,15 +515,15 @@ export const McpAddCommand = effectCmd({
       let configPath = globalConfigPath
       if (project.vcs === "git") {
         const scopeResult = await prompts.select({
-          message: "Location",
+          message: "Vị trí",
           options: [
             {
-              label: "Current project",
+              label: "Project hiện tại",
               value: projectConfigPath,
               hint: projectConfigPath,
             },
             {
-              label: "Global",
+              label: "Toàn cục",
               value: globalConfigPath,
               hint: globalConfigPath,
             },
@@ -534,23 +534,23 @@ export const McpAddCommand = effectCmd({
       }
 
       const name = await prompts.text({
-        message: "Enter MCP server name",
-        validate: (x) => (x && x.length > 0 ? undefined : "Required"),
+        message: "Nhập tên máy chủ MCP",
+        validate: (x) => (x && x.length > 0 ? undefined : "Bắt buộc"),
       })
       if (prompts.isCancel(name)) throw new UI.CancelledError()
 
       const type = await prompts.select({
-        message: "Select MCP server type",
+        message: "Chọn loại máy chủ MCP",
         options: [
           {
             label: "Local",
             value: "local",
-            hint: "Run a local command",
+            hint: "Chạy một lệnh cục bộ",
           },
           {
             label: "Remote",
             value: "remote",
-            hint: "Connect to a remote URL",
+            hint: "Kết nối đến một URL từ xa",
           },
         ],
       })
@@ -558,9 +558,9 @@ export const McpAddCommand = effectCmd({
 
       if (type === "local") {
         const command = await prompts.text({
-          message: "Enter command to run",
+          message: "Nhập lệnh cần chạy",
           placeholder: "e.g., opencode x @modelcontextprotocol/server-filesystem",
-          validate: (x) => (x && x.length > 0 ? undefined : "Required"),
+          validate: (x) => (x && x.length > 0 ? undefined : "Bắt buộc"),
         })
         if (prompts.isCancel(command)) throw new UI.CancelledError()
 
@@ -570,26 +570,26 @@ export const McpAddCommand = effectCmd({
         }
 
         await addMcpToConfig(name, mcpConfig, configPath)
-        prompts.log.success(`MCP server "${name}" added to ${configPath}`)
-        prompts.outro("MCP server added successfully")
+        prompts.log.success(`Đã thêm máy chủ MCP "${name}" vào ${configPath}`)
+        prompts.outro("Đã thêm máy chủ MCP thành công")
         return
       }
 
       if (type === "remote") {
         const url = await prompts.text({
-          message: "Enter MCP server URL",
+          message: "Nhập URL của máy chủ MCP",
           placeholder: "e.g., https://example.com/mcp",
           validate: (x) => {
-            if (!x) return "Required"
-            if (x.length === 0) return "Required"
+            if (!x) return "Bắt buộc"
+            if (x.length === 0) return "Bắt buộc"
             const isValid = URL.canParse(x)
-            return isValid ? undefined : "Invalid URL"
+            return isValid ? undefined : "URL không hợp lệ"
           },
         })
         if (prompts.isCancel(url)) throw new UI.CancelledError()
 
         const useOAuth = await prompts.confirm({
-          message: "Does this server require OAuth authentication?",
+          message: "Máy chủ này có yêu cầu xác thực OAuth không?",
           initialValue: false,
         })
         if (prompts.isCancel(useOAuth)) throw new UI.CancelledError()
@@ -598,20 +598,20 @@ export const McpAddCommand = effectCmd({
 
         if (useOAuth) {
           const hasClientId = await prompts.confirm({
-            message: "Do you have a pre-registered client ID?",
+            message: "Bạn đã có client ID đăng ký sẵn chưa?",
             initialValue: false,
           })
           if (prompts.isCancel(hasClientId)) throw new UI.CancelledError()
 
           if (hasClientId) {
             const clientId = await prompts.text({
-              message: "Enter client ID",
-              validate: (x) => (x && x.length > 0 ? undefined : "Required"),
+              message: "Nhập client ID",
+              validate: (x) => (x && x.length > 0 ? undefined : "Bắt buộc"),
             })
             if (prompts.isCancel(clientId)) throw new UI.CancelledError()
 
             const hasSecret = await prompts.confirm({
-              message: "Do you have a client secret?",
+              message: "Bạn có client secret không?",
               initialValue: false,
             })
             if (prompts.isCancel(hasSecret)) throw new UI.CancelledError()
@@ -619,7 +619,7 @@ export const McpAddCommand = effectCmd({
             let clientSecret: string | undefined
             if (hasSecret) {
               const secret = await prompts.password({
-                message: "Enter client secret",
+                message: "Nhập client secret",
               })
               if (prompts.isCancel(secret)) throw new UI.CancelledError()
               clientSecret = secret
@@ -648,20 +648,20 @@ export const McpAddCommand = effectCmd({
         }
 
         await addMcpToConfig(name, mcpConfig, configPath)
-        prompts.log.success(`MCP server "${name}" added to ${configPath}`)
+        prompts.log.success(`Đã thêm máy chủ MCP "${name}" vào ${configPath}`)
       }
 
-      prompts.outro("MCP server added successfully")
+      prompts.outro("Đã thêm máy chủ MCP thành công")
     })
   }),
 })
 
 export const McpDebugCommand = effectCmd({
   command: "debug <name>",
-  describe: "debug OAuth connection for an MCP server",
+  describe: "gỡ lỗi kết nối OAuth cho một máy chủ MCP",
   builder: (yargs) =>
     yargs.positional("name", {
-      describe: "name of the MCP server",
+      describe: "tên của máy chủ MCP",
       type: "string",
       demandOption: true,
     }),
@@ -679,33 +679,33 @@ export const McpDebugCommand = effectCmd({
         : undefined
     yield* Effect.promise(async () => {
       UI.empty()
-      prompts.intro("MCP OAuth Debug")
+      prompts.intro("Gỡ lỗi OAuth MCP")
 
       const serverName = args.name
 
       if (!serverConfig) {
-        prompts.log.error(`MCP server not found: ${serverName}`)
-        prompts.outro("Done")
+        prompts.log.error(`Không tìm thấy máy chủ MCP: ${serverName}`)
+        prompts.outro("Hoàn tất")
         return
       }
 
       if (!isMcpRemote(serverConfig)) {
-        prompts.log.error(`MCP server ${serverName} is not a remote server`)
-        prompts.outro("Done")
+        prompts.log.error(`Máy chủ MCP ${serverName} không phải là máy chủ remote`)
+        prompts.outro("Hoàn tất")
         return
       }
 
       if (serverConfig.oauth === false) {
-        prompts.log.warn(`MCP server ${serverName} has OAuth explicitly disabled`)
-        prompts.outro("Done")
+        prompts.log.warn(`Máy chủ MCP ${serverName} đã tắt OAuth một cách rõ ràng`)
+        prompts.outro("Hoàn tất")
         return
       }
 
-      prompts.log.info(`Server: ${serverName}`)
+      prompts.log.info(`Máy chủ: ${serverName}`)
       prompts.log.info(`URL: ${serverConfig.url}`)
 
       const { authStatus, entry } = authInfo!
-      prompts.log.info(`Auth status: ${getAuthStatusIcon(authStatus)} ${getAuthStatusText(authStatus)}`)
+      prompts.log.info(`Trạng thái xác thực: ${getAuthStatusIcon(authStatus)} ${getAuthStatusText(authStatus)}`)
 
       if (entry?.tokens) {
         prompts.log.info(
@@ -714,22 +714,22 @@ export const McpDebugCommand = effectCmd({
         if (entry.tokens.expiresAt) {
           const expiresDate = new Date(entry.tokens.expiresAt * 1000)
           const isExpired = entry.tokens.expiresAt < Date.now() / 1000
-          prompts.log.info(`  Expires: ${expiresDate.toISOString()} ${isExpired ? "(EXPIRED)" : ""}`)
+          prompts.log.info(`  Hết hạn: ${expiresDate.toISOString()} ${isExpired ? "(HẾT HẠN)" : ""}`)
         }
         if (entry.tokens.refreshToken) {
-          prompts.log.info(`  Refresh token: present`)
+          prompts.log.info(`  Refresh token: có`)
         }
       }
       if (entry?.clientInfo) {
         prompts.log.info(`  Client ID: ${entry.clientInfo.clientId}`)
         if (entry.clientInfo.clientSecretExpiresAt) {
           const expiresDate = new Date(entry.clientInfo.clientSecretExpiresAt * 1000)
-          prompts.log.info(`  Client secret expires: ${expiresDate.toISOString()}`)
+          prompts.log.info(`  Client secret hết hạn: ${expiresDate.toISOString()}`)
         }
       }
 
       const spinner = prompts.spinner()
-      spinner.start("Testing connection...")
+      spinner.start("Đang thử kết nối...")
 
       // Test basic HTTP connectivity first
       try {
@@ -752,7 +752,7 @@ export const McpDebugCommand = effectCmd({
           }),
         })
 
-        spinner.stop(`HTTP response: ${response.status} ${response.statusText}`)
+        spinner.stop(`Phản hồi HTTP: ${response.status} ${response.statusText}`)
 
         // Check for WWW-Authenticate header
         const wwwAuth = response.headers.get("www-authenticate")
@@ -761,7 +761,7 @@ export const McpDebugCommand = effectCmd({
         }
 
         if (response.status === 401) {
-          prompts.log.info("Initial unauthenticated check returned 401, so this server requires OAuth")
+          prompts.log.info("Kiểm tra ban đầu chưa xác thực trả về 401, nên máy chủ này yêu cầu OAuth")
 
           // Try to discover OAuth metadata
           const oauthConfig = typeof serverConfig.oauth === "object" ? serverConfig.oauth : undefined
@@ -780,7 +780,7 @@ export const McpDebugCommand = effectCmd({
             auth,
           )
 
-          prompts.log.info("Testing OAuth flow (without completing authorization)...")
+          prompts.log.info("Đang thử luồng OAuth (không hoàn tất ủy quyền)...")
 
           // Try creating transport with auth provider to trigger discovery
           const transport = new StreamableHTTPClientTransport(new URL(serverConfig.url), {
@@ -794,47 +794,47 @@ export const McpDebugCommand = effectCmd({
               version: InstallationVersion,
             })
             await client.connect(transport)
-            prompts.log.success("Connection successful (already authenticated)")
+            prompts.log.success("Kết nối thành công (đã xác thực từ trước)")
             await client.close()
           } catch (error) {
             if (error instanceof UnauthorizedError) {
-              prompts.log.info(`OAuth flow triggered: ${error.message}`)
+              prompts.log.info(`Luồng OAuth đã được kích hoạt: ${error.message}`)
 
               // Check if dynamic registration would be attempted
               const clientInfo = await authProvider.clientInformation()
               if (clientInfo) {
-                prompts.log.info(`Client ID available: ${clientInfo.client_id}`)
+                prompts.log.info(`Client ID khả dụng: ${clientInfo.client_id}`)
               } else {
-                prompts.log.info("No client ID - dynamic registration will be attempted")
+                prompts.log.info("Không có client ID - sẽ thử đăng ký động")
               }
             } else {
-              prompts.log.error(`Connection error: ${error instanceof Error ? error.message : String(error)}`)
+              prompts.log.error(`Lỗi kết nối: ${error instanceof Error ? error.message : String(error)}`)
             }
           }
         } else if (response.status >= 200 && response.status < 300) {
-          prompts.log.success("Server responded successfully (no auth required or already authenticated)")
+          prompts.log.success("Máy chủ phản hồi thành công (không cần xác thực hoặc đã xác thực)")
           const body = await response.text()
           try {
             const json = JSON.parse(body)
             if (json.result?.serverInfo) {
-              prompts.log.info(`Server info: ${JSON.stringify(json.result.serverInfo)}`)
+              prompts.log.info(`Thông tin máy chủ: ${JSON.stringify(json.result.serverInfo)}`)
             }
           } catch {
             // Not JSON, ignore
           }
         } else {
-          prompts.log.warn(`Unexpected status: ${response.status}`)
+          prompts.log.warn(`Trạng thái không mong đợi: ${response.status}`)
           const body = await response.text().catch(() => "")
           if (body) {
-            prompts.log.info(`Response body: ${body.substring(0, 500)}`)
+            prompts.log.info(`Nội dung phản hồi: ${body.substring(0, 500)}`)
           }
         }
       } catch (error) {
-        spinner.stop("Connection failed", 1)
-        prompts.log.error(`Error: ${error instanceof Error ? error.message : String(error)}`)
+        spinner.stop("Kết nối thất bại", 1)
+        prompts.log.error(`Lỗi: ${error instanceof Error ? error.message : String(error)}`)
       }
 
-      prompts.outro("Debug complete")
+      prompts.outro("Gỡ lỗi hoàn tất")
     })
   }),
 })

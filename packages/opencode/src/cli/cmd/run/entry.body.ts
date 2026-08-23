@@ -195,7 +195,7 @@ export function entryBody(commit: StreamCommit): RunEntryBody {
     }
 
     if (commit.phase === "final") {
-      return commit.interrupted ? textBody("reasoning interrupted") : RUN_ENTRY_NONE
+      return commit.interrupted ? textBody("suy luận bị gián đoạn") : RUN_ENTRY_NONE
     }
 
     return reasoningBody(raw)

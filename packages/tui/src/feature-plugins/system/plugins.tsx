@@ -10,12 +10,12 @@ const id = "internal:plugin-manager"
 
 function state(api: TuiPluginApi, item: TuiPluginStatus) {
   if (!item.enabled) {
-    return <span style={{ fg: api.theme.current.textMuted }}>disabled</span>
+    return <span style={{ fg: api.theme.current.textMuted }}>đã tắt</span>
   }
 
   return (
     <span style={{ fg: item.active ? api.theme.current.success : api.theme.current.error }}>
-      {item.active ? "active" : "inactive"}
+      {item.active ? "đang chạy" : "đã dừng"}
     </span>
   )
 }
@@ -27,8 +27,8 @@ function source(spec: string) {
 
 function meta(item: TuiPluginStatus, width: number) {
   if (item.source === "internal") {
-    if (width >= 120) return "Built-in plugin"
-    return "Built-in"
+    if (width >= 120) return "Plugin tích hợp sẵn"
+    return "Tích hợp sẵn"
   }
   const next = source(item.spec)
   if (next) return next
@@ -41,23 +41,23 @@ function Install(props: { api: TuiPluginApi }) {
 
   useBindings(() => ({
     enabled: !busy(),
-    bindings: [{ key: "tab", desc: "Toggle install scope", group: "Plugins", cmd: () => setGlobal((value) => !value) }],
+    bindings: [{ key: "tab", desc: "Đổi phạm vi cài đặt", group: "Plugins", cmd: () => setGlobal((value) => !value) }],
   }))
 
   return (
     <props.api.ui.DialogPrompt
-      title="Install plugin"
-      placeholder="npm package name"
+      title="Cài đặt plugin"
+      placeholder="tên package npm"
       busy={busy()}
-      busyText="Installing plugin..."
+      busyText="Đang cài đặt plugin..."
       description={() => (
         <box flexDirection="row" gap={1}>
-          <text fg={props.api.theme.current.textMuted}>scope:</text>
+          <text fg={props.api.theme.current.textMuted}>phạm vi:</text>
           <text fg={busy() ? props.api.theme.current.textMuted : props.api.theme.current.text}>
             {global() ? "global" : "local"}
           </text>
           <Show when={!busy()}>
-            <text fg={props.api.theme.current.textMuted}>(tab toggle)</text>
+            <text fg={props.api.theme.current.textMuted}>(tab để đổi)</text>
           </Show>
         </box>
       )}
@@ -67,7 +67,7 @@ function Install(props: { api: TuiPluginApi }) {
         if (!mod) {
           props.api.ui.toast({
             variant: "error",
-            message: "Plugin package name is required",
+            message: "Cần nhập tên package plugin",
           })
           return
         }
@@ -84,7 +84,7 @@ function Install(props: { api: TuiPluginApi }) {
               if (out.missing) {
                 props.api.ui.toast({
                   variant: "info",
-                  message: "Check npm registry/auth settings and try again.",
+                  message: "Hãy kiểm tra cấu hình registry/xác thực của npm rồi thử lại.",
                 })
               }
               show(props.api)
@@ -93,12 +93,12 @@ function Install(props: { api: TuiPluginApi }) {
 
             props.api.ui.toast({
               variant: "success",
-              message: `Installed ${mod} (${global() ? "global" : "local"}: ${out.dir})`,
+              message: `Đã cài đặt ${mod} (${global() ? "global" : "local"}: ${out.dir})`,
             })
             if (!out.tui) {
               props.api.ui.toast({
                 variant: "info",
-                message: "Package has no TUI target to load in this app.",
+                message: "Package không có TUI target để tải trong ứng dụng này.",
               })
               show(props.api)
               return
@@ -108,7 +108,7 @@ function Install(props: { api: TuiPluginApi }) {
               if (!ok) {
                 props.api.ui.toast({
                   variant: "warning",
-                  message: "Installed plugin, but runtime load failed. See console/logs; restart TUI to retry.",
+                  message: "Đã cài plugin nhưng lỗi khi load runtime. Xem console/logs; khởi động lại TUI để thử lại.",
                 })
                 show(props.api)
                 return
@@ -116,7 +116,7 @@ function Install(props: { api: TuiPluginApi }) {
 
               props.api.ui.toast({
                 variant: "success",
-                message: `Loaded ${mod} in current session.`,
+                message: `Đã tải ${mod} vào session hiện tại.`,
               })
               show(props.api)
             })
@@ -136,7 +136,7 @@ function row(api: TuiPluginApi, item: TuiPluginStatus, width: number): DialogSel
   return {
     title: item.id,
     value: item.id,
-    category: item.source === "internal" ? "Internal" : "External",
+    category: item.source === "internal" ? "Nội bộ" : "Bên ngoài",
     description: meta(item, width),
     footer: state(api, item),
     disabled: item.id === id,
@@ -188,7 +188,7 @@ function View(props: { api: TuiPluginApi }) {
         if (!ok) {
           props.api.ui.toast({
             variant: "error",
-            message: `Failed to update plugin ${item.id}`,
+            message: `Không thể cập nhật plugin ${item.id}`,
           })
         }
         setList(props.api.plugins.list())
@@ -206,7 +206,7 @@ function View(props: { api: TuiPluginApi }) {
       onMove={(item) => setCur(item.value)}
       actions={[
         {
-          title: "toggle",
+          title: "bật/tắt",
           command: "plugins.toggle",
           hidden: lock(),
           onTrigger: (item) => {
@@ -215,7 +215,7 @@ function View(props: { api: TuiPluginApi }) {
           },
         },
         {
-          title: "install",
+          title: "cài đặt",
           command: "dialog.plugins.install",
           hidden: lock(),
           onTrigger: () => {
@@ -249,7 +249,7 @@ const tui: TuiPlugin = async (api) => {
       },
       {
         name: "plugins.install",
-        title: "Install plugin",
+        title: "Cài đặt plugin",
         category: "System",
         namespace: "palette",
         run() {

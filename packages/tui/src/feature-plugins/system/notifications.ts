@@ -18,12 +18,12 @@ function notify(api: TuiPluginApi, sessionID: string | undefined, message: strin
 }
 
 function sessionErrorMessage(error: SessionError) {
-  if (error?.name === "MessageAbortedError") return "Session aborted"
+  if (error?.name === "MessageAbortedError") return "Session đã bị hủy"
   const data = error?.data
   if (data && typeof data === "object" && "message" in data && data.message === "SSE read timed out") {
-    return "Model stopped responding"
+    return "Model ngừng phản hồi"
   }
-  return "Session error"
+  return "Lỗi session"
 }
 
 const tui: TuiPlugin = async (api) => {
@@ -35,7 +35,7 @@ const tui: TuiPlugin = async (api) => {
   api.event.on("question.asked", (event) => {
     if (questions.has(event.properties.id)) return
     questions.add(event.properties.id)
-    notify(api, event.properties.sessionID, "Question needs input", "question")
+    notify(api, event.properties.sessionID, "Câu hỏi cần bạn trả lời", "question")
   })
 
   api.event.on("question.replied", (event) => {
@@ -49,7 +49,7 @@ const tui: TuiPlugin = async (api) => {
   api.event.on("permission.asked", (event) => {
     if (permissions.has(event.properties.id)) return
     permissions.add(event.properties.id)
-    notify(api, event.properties.sessionID, "Permission needs input", "permission")
+    notify(api, event.properties.sessionID, "Quyền cần bạn duyệt", "permission")
   })
 
   api.event.on("permission.replied", (event) => {
@@ -74,7 +74,7 @@ const tui: TuiPlugin = async (api) => {
     }
 
     const session = api.state.session.get(sessionID)
-    notify(api, sessionID, "Session done", session?.parentID ? "subagent_done" : "done")
+    notify(api, sessionID, "Session hoàn tất", session?.parentID ? "subagent_done" : "done")
   })
 
   api.event.on("session.error", (event) => {

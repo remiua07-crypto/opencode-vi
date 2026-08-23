@@ -71,43 +71,43 @@ export function resolveThreadDirectory(project?: string, envPWD = process.env.PW
 
 export const TuiThreadCommand = cmd({
   command: "$0 [project]",
-  describe: "start opencode tui",
+  describe: "khởi động opencode tui",
   builder: (yargs) =>
     withNetworkOptions(yargs)
       .positional("project", {
         type: "string",
-        describe: "path to start opencode in",
+        describe: "đường dẫn để khởi động opencode",
       })
       .option("model", {
         type: "string",
         alias: ["m"],
-        describe: "model to use in the format of provider/model",
+        describe: "model sử dụng theo định dạng provider/model",
       })
       .option("continue", {
         alias: ["c"],
-        describe: "continue the last session",
+        describe: "tiếp tục session gần nhất",
         type: "boolean",
       })
       .option("session", {
         alias: ["s"],
         type: "string",
-        describe: "session id to continue",
+        describe: "id của session cần tiếp tục",
       })
       .option("fork", {
         type: "boolean",
-        describe: "fork the session when continuing (use with --continue or --session)",
+        describe: "fork session khi tiếp tục (dùng cùng --continue hoặc --session)",
       })
       .option("prompt", {
         type: "string",
-        describe: "prompt to use",
+        describe: "prompt sử dụng",
       })
       .option("agent", {
         type: "string",
-        describe: "agent to use",
+        describe: "agent sử dụng",
       })
       .option("auto", {
         type: "boolean",
-        describe: "auto-approve permissions that are not explicitly denied (dangerous!)",
+        describe: "tự động phê duyệt các permission không bị từ chối rõ ràng (nguy hiểm!)",
         default: false,
       })
       .option("yolo", {
@@ -122,7 +122,7 @@ export const TuiThreadCommand = cmd({
       })
       .option("mini", {
         type: "boolean",
-        describe: "start the minimal interactive interface",
+        describe: "khởi động giao diện tương tác tối giản",
         default: false,
       })
       .option("replay", {
@@ -131,11 +131,11 @@ export const TuiThreadCommand = cmd({
       })
       .option("no-replay", {
         type: "boolean",
-        describe: "disable mini session history replay on resume and after resize",
+        describe: "tắt phát lại lịch sử session mini khi resume và sau khi resize",
       })
       .option("replay-limit", {
         type: "number",
-        describe: "cap visible mini replay to the newest N messages",
+        describe: "giới hạn phần phát lại mini hiển thị ở N tin nhắn mới nhất",
       })
       .option("demo", {
         type: "boolean",
@@ -143,7 +143,7 @@ export const TuiThreadCommand = cmd({
       }),
   handler: async (args) => {
     if (args.replay === true) {
-      UI.error("--replay is not supported; replay is enabled by default")
+      UI.error("--replay không được hỗ trợ; replay được bật theo mặc định")
       process.exitCode = 1
       return
     }
@@ -190,7 +190,7 @@ export const TuiThreadCommand = cmd({
     try {
       const { TuiConfig } = await import("@/config/tui")
       if (args.fork && !args.continue && !args.session) {
-        UI.error("--fork requires --continue or --session")
+        UI.error("--fork yêu cầu --continue hoặc --session")
         process.exitCode = 1
         return
       }
@@ -202,7 +202,7 @@ export const TuiThreadCommand = cmd({
       try {
         process.chdir(next)
       } catch {
-        UI.error("Failed to change directory to " + next)
+        UI.error("Không thể đổi thư mục sang " + next)
         return
       }
       const cwd = Filesystem.resolve(process.cwd())

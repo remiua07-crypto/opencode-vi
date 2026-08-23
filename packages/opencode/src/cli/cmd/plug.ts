@@ -74,11 +74,11 @@ export function createPlugTask(input: PlugInput, dep: PlugDeps = defaultPlugDeps
 
   return async (ctx: PlugCtx) => {
     const install = dep.spinner()
-    install.start("Installing plugin package...")
+    install.start("Đang cài đặt gói plugin...")
     const target = await installPlugin(mod, dep)
     if (!target.ok) {
-      install.stop("Install failed", 1)
-      dep.log.error(`Could not install "${mod}"`)
+      install.stop("Cài đặt thất bại", 1)
+      dep.log.error(`Không thể cài đặt "${mod}"`)
       const hit = cause(target.error) ?? target.error
       if (hit instanceof Process.RunFailedError) {
         const lines = hit.stderr
@@ -90,8 +90,8 @@ export function createPlugTask(input: PlugInput, dep: PlugDeps = defaultPlugDeps
         const detail = errs[0] ?? lines.at(-1)
         if (detail) dep.log.error(detail)
         if (lines.some((line) => line.includes("No version matching"))) {
-          dep.log.info("This package depends on a version that is not available in your npm registry.")
-          dep.log.info("Check npm registry/auth settings and try again.")
+          dep.log.info("Gói này phụ thuộc vào một phiên bản không có sẵn trong npm registry của bạn.")
+          dep.log.info("Hãy kiểm tra cấu hình registry/xác thực npm và thử lại.")
         }
       }
       if (!(hit instanceof Process.RunFailedError)) {
@@ -99,24 +99,24 @@ export function createPlugTask(input: PlugInput, dep: PlugDeps = defaultPlugDeps
       }
       return false
     }
-    install.stop("Plugin package ready")
+    install.stop("Gói plugin đã sẵn sàng")
 
     const inspect = dep.spinner()
-    inspect.start("Reading plugin manifest...")
+    inspect.start("Đang đọc manifest plugin...")
     const manifest = await readPluginManifest(target.target)
     if (!manifest.ok) {
       if (manifest.code === "manifest_read_failed") {
-        inspect.stop("Manifest read failed", 1)
-        dep.log.error(`Installed "${mod}" but failed to read ${manifest.file}`)
+        inspect.stop("Đọc manifest thất bại", 1)
+        dep.log.error(`Đã cài "${mod}" nhưng không đọc được ${manifest.file}`)
         dep.log.error(errorMessage(cause(manifest.error) ?? manifest.error))
         return false
       }
 
       if (manifest.code === "manifest_no_targets") {
-        inspect.stop("No plugin targets found", 1)
-        dep.log.error(`"${mod}" does not expose plugin entrypoints in package.json`)
+        inspect.stop("Không tìm thấy target plugin nào", 1)
+        dep.log.error(`"${mod}" không khai báo entrypoint plugin trong package.json`)
         dep.log.info(
-          'Expected one of: exports["./tui"], exports["./server"], package.json main for server, or package.json["oc-themes"] for tui themes.',
+          'Mong muốn một trong: exports["./tui"], exports["./server"], package.json main cho server, hoặc package.json["oc-themes"] cho theme tui.',
         )
         return false
       }
@@ -126,11 +126,11 @@ export function createPlugTask(input: PlugInput, dep: PlugDeps = defaultPlugDeps
     }
 
     inspect.stop(
-      `Detected ${manifest.targets.map((item) => item.kind).join(" + ")} target${manifest.targets.length === 1 ? "" : "s"}`,
+      `Phát hiện ${manifest.targets.map((item) => item.kind).join(" + ")} target`,
     )
 
     const patch = dep.spinner()
-    patch.start("Updating plugin config...")
+    patch.start("Đang cập nhật cấu hình plugin...")
     const out = await patchPluginConfig(
       {
         spec: mod,
@@ -146,31 +146,31 @@ export function createPlugTask(input: PlugInput, dep: PlugDeps = defaultPlugDeps
     )
     if (!out.ok) {
       if (out.code === "invalid_json") {
-        patch.stop(`Failed updating ${out.kind} config`, 1)
-        dep.log.error(`Invalid JSON in ${out.file} (${out.parse} at line ${out.line}, column ${out.col})`)
-        dep.log.info("Fix the config file and run the command again.")
+        patch.stop(`Cập nhật cấu hình ${out.kind} thất bại`, 1)
+        dep.log.error(`JSON không hợp lệ trong ${out.file} (${out.parse} tại dòng ${out.line}, cột ${out.col})`)
+        dep.log.info("Hãy sửa file cấu hình và chạy lại lệnh.")
         return false
       }
 
-      patch.stop("Failed updating plugin config", 1)
+      patch.stop("Cập nhật cấu hình plugin thất bại", 1)
       dep.log.error(errorMessage(out.error))
       return false
     }
-    patch.stop("Plugin config updated")
+    patch.stop("Đã cập nhật cấu hình plugin")
     for (const item of out.items) {
       if (item.mode === "noop") {
-        dep.log.info(`Already configured in ${item.file}`)
+        dep.log.info(`Đã được cấu hình sẵn trong ${item.file}`)
         continue
       }
       if (item.mode === "replace") {
-        dep.log.info(`Replaced in ${item.file}`)
+        dep.log.info(`Đã thay thế trong ${item.file}`)
         continue
       }
-      dep.log.info(`Added to ${item.file}`)
+      dep.log.info(`Đã thêm vào ${item.file}`)
     }
 
-    dep.log.success(`Installed ${mod}`)
-    dep.log.info(global ? `Scope: global (${out.dir})` : `Scope: local (${out.dir})`)
+    dep.log.success(`Đã cài đặt ${mod}`)
+    dep.log.info(global ? `Phạm vi: toàn cục (${out.dir})` : `Phạm vi: cục bộ (${out.dir})`)
     return true
   }
 }
@@ -178,35 +178,35 @@ export function createPlugTask(input: PlugInput, dep: PlugDeps = defaultPlugDeps
 export const PluginCommand = effectCmd({
   command: "plugin <module>",
   aliases: ["plug"],
-  describe: "install plugin and update config",
+  describe: "cài đặt plugin và cập nhật cấu hình",
   builder: (yargs) =>
     yargs
       .positional("module", {
         type: "string",
-        describe: "npm module name",
+        describe: "tên module npm",
       })
       .option("global", {
         alias: ["g"],
         type: "boolean",
         default: false,
-        describe: "install in global config",
+        describe: "cài vào cấu hình toàn cục",
       })
       .option("force", {
         alias: ["f"],
         type: "boolean",
         default: false,
-        describe: "replace existing plugin version",
+        describe: "thay thế phiên bản plugin hiện có",
       }),
   handler: Effect.fn("Cli.plug")(function* (args) {
     const mod = String(args.module ?? "").trim()
     if (!mod) {
-      UI.error("module is required")
+      UI.error("cần chỉ định module")
       process.exitCode = 1
       return
     }
 
     UI.empty()
-    intro(`Install plugin ${mod}`)
+    intro(`Cài đặt plugin ${mod}`)
 
     const run = createPlugTask({
       mod,
@@ -224,7 +224,7 @@ export const PluginCommand = effectCmd({
       }),
     )
 
-    outro("Done")
+    outro("Hoàn tất")
     if (!ok) process.exitCode = 1
   }),
 })

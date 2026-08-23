@@ -373,7 +373,7 @@ export function DialogSelect<T>(props: DialogSelectProps<T>) {
       commands: [
         {
           name: "dialog.select.prev",
-          title: "Previous item",
+          title: "Mục trước",
           category: "Dialog",
           run() {
             setStore("input", "keyboard")
@@ -382,7 +382,7 @@ export function DialogSelect<T>(props: DialogSelectProps<T>) {
         },
         {
           name: "dialog.select.next",
-          title: "Next item",
+          title: "Mục sau",
           category: "Dialog",
           run() {
             setStore("input", "keyboard")
@@ -391,7 +391,7 @@ export function DialogSelect<T>(props: DialogSelectProps<T>) {
         },
         {
           name: "dialog.select.page_up",
-          title: "Page up",
+          title: "Lên một trang",
           category: "Dialog",
           run() {
             setStore("input", "keyboard")
@@ -400,7 +400,7 @@ export function DialogSelect<T>(props: DialogSelectProps<T>) {
         },
         {
           name: "dialog.select.page_down",
-          title: "Page down",
+          title: "Xuống một trang",
           category: "Dialog",
           run() {
             setStore("input", "keyboard")
@@ -409,7 +409,7 @@ export function DialogSelect<T>(props: DialogSelectProps<T>) {
         },
         {
           name: "dialog.select.home",
-          title: "First item",
+          title: "Mục đầu tiên",
           category: "Dialog",
           run() {
             if (props.locked) return
@@ -419,7 +419,7 @@ export function DialogSelect<T>(props: DialogSelectProps<T>) {
         },
         {
           name: "dialog.select.end",
-          title: "Last item",
+          title: "Mục cuối cùng",
           category: "Dialog",
           run() {
             if (props.locked) return
@@ -429,7 +429,7 @@ export function DialogSelect<T>(props: DialogSelectProps<T>) {
         },
         {
           name: "dialog.select.submit",
-          title: "Select item",
+          title: "Chọn mục",
           category: "Dialog",
           run: submit,
         },
@@ -462,13 +462,13 @@ export function DialogSelect<T>(props: DialogSelectProps<T>) {
           ? [
               {
                 key: "tab",
-                desc: "Next dialog action",
+                desc: "Hành động tiếp theo",
                 group: "Dialog",
                 cmd: () => moveAction(1),
               },
               {
                 key: "shift+tab",
-                desc: "Previous dialog action",
+                desc: "Hành động trước đó",
                 group: "Dialog",
                 cmd: () => moveAction(-1),
               },
@@ -590,7 +590,7 @@ export function DialogSelect<T>(props: DialogSelectProps<T>) {
                   input.focus()
                 }, 1)
               }}
-              placeholder={props.placeholder ?? "Search"}
+              placeholder={props.placeholder ?? "Tìm kiếm"}
               placeholderColor={theme.textMuted}
             />
           </box>
@@ -602,7 +602,7 @@ export function DialogSelect<T>(props: DialogSelectProps<T>) {
           fallback={
             props.emptyView ?? (
               <box paddingLeft={4} paddingRight={4} paddingTop={1}>
-                <text fg={theme.textMuted}>No results found</text>
+                <text fg={theme.textMuted}>Không tìm thấy kết quả</text>
               </box>
             )
           }

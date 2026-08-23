@@ -267,7 +267,7 @@ export function formatUnknownError(error: unknown): string {
     }
   }
 
-  return "unknown error"
+  return "lỗi không xác định"
 }
 
 function sameView(a: FooterView, b: FooterView) {
@@ -550,7 +550,7 @@ function createLayer(input: StreamInput) {
             return next
           }
 
-          return yield* Effect.fail(new Error("no primary agent available for shell mode"))
+          return yield* Effect.fail(new Error("không có agent chính khả dụng cho chế độ shell"))
         })
 
         const recoverQuestion = Effect.fn("RunStreamTransport.recoverQuestion")(function* (partID: string) {
@@ -1347,7 +1347,7 @@ function createLayer(input: StreamInput) {
               if (!input.footer.isClosed && !state.data.announced) {
                 input.trace?.write("ui.patch", {
                   phase: "running",
-                  status: "waiting for assistant",
+                  status: "đang chờ assistant",
                 })
                 input.footer.event({
                   type: "turn.wait",

@@ -6,7 +6,7 @@ import { ServerAuth } from "@/server/auth"
 
 export const AttachCommand = cmd({
   command: "attach <url>",
-  describe: "attach to a running opencode server",
+  describe: "gắn vào một máy chủ opencode đang chạy",
   builder: (yargs) =>
     yargs
       .positional("url", {
@@ -16,35 +16,35 @@ export const AttachCommand = cmd({
       })
       .option("dir", {
         type: "string",
-        description: "directory to run in",
+        description: "thư mục để chạy",
       })
       .option("continue", {
         alias: ["c"],
-        describe: "continue the last session",
+        describe: "tiếp tục session gần nhất",
         type: "boolean",
       })
       .option("session", {
         alias: ["s"],
         type: "string",
-        describe: "session id to continue",
+        describe: "id session cần tiếp tục",
       })
       .option("fork", {
         type: "boolean",
-        describe: "fork the session when continuing (use with --continue or --session)",
+        describe: "nhánh session khi tiếp tục (dùng với --continue hoặc --session)",
       })
       .option("password", {
         alias: ["p"],
         type: "string",
-        describe: "basic auth password (defaults to OPENCODE_SERVER_PASSWORD)",
+        describe: "mật khẩu basic auth (mặc định là OPENCODE_SERVER_PASSWORD)",
       })
       .option("username", {
         alias: ["u"],
         type: "string",
-        describe: "basic auth username (defaults to OPENCODE_SERVER_USERNAME or 'opencode')",
+        describe: "tên đăng nhập basic auth (mặc định là OPENCODE_SERVER_USERNAME hoặc 'opencode')",
       })
       .option("mini", {
         type: "boolean",
-        describe: "start the minimal interactive interface",
+        describe: "khởi chạy giao diện tương tác tối giản",
         default: false,
       })
       .option("replay", {
@@ -53,15 +53,15 @@ export const AttachCommand = cmd({
       })
       .option("no-replay", {
         type: "boolean",
-        describe: "disable mini session history replay on resume and after resize",
+        describe: "tắt phát lại lịch sử mini khi tiếp tục và sau khi thay đổi kích thước",
       })
       .option("replay-limit", {
         type: "number",
-        describe: "cap visible mini replay to the newest N messages",
+        describe: "giới hạn phát lại mini hiển thị ở N tin nhắn mới nhất",
       }),
   handler: async (args) => {
     if (args.replay === true) {
-      UI.error("--replay is not supported; replay is enabled by default")
+      UI.error("--replay không được hỗ trợ; replay được bật theo mặc định")
       process.exitCode = 1
       return
     }
@@ -106,7 +106,7 @@ export const AttachCommand = cmd({
 
     const { TuiConfig } = await import("@/config/tui")
     if (args.fork && !args.continue && !args.session) {
-      UI.error("--fork requires --continue or --session")
+      UI.error("--fork yêu cầu --continue hoặc --session")
       process.exitCode = 1
       return
     }

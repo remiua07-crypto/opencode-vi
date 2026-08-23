@@ -93,10 +93,10 @@ type ExportData = { info: SDKSession; messages: Array<{ info: Message; parts: Pa
 
 export const ImportCommand = effectCmd({
   command: "import <file>",
-  describe: "import session data from JSON file or URL",
+  describe: "import dữ liệu session từ file JSON hoặc URL",
   builder: (yargs) =>
     yargs.positional("file", {
-      describe: "path to JSON file or share URL",
+      describe: "đường dẫn file JSON hoặc URL chia sẻ",
       type: "string",
       demandOption: true,
     }),
@@ -120,7 +120,7 @@ const runImport = Effect.fn("Cli.import.body")(function* (file: string, ctx: Ins
     const slug = parseShareUrl(file)
     if (!slug) {
       const baseUrl = yield* Effect.orDie(share.url())
-      process.stdout.write(`Invalid URL format. Expected: ${baseUrl}/share/<slug>`)
+      process.stdout.write(`Định dạng URL không hợp lệ. Mong muốn: ${baseUrl}/share/<slug>`)
       process.stdout.write(EOL)
       return
     }
@@ -134,7 +134,7 @@ const runImport = Effect.fn("Cli.import.body")(function* (file: string, ctx: Ins
         try: () => fetch(url, { headers }),
         catch: (e) =>
           new CliError({
-            message: `Failed to fetch share data: ${e instanceof Error ? e.message : String(e)}`,
+            message: `Không thể tải dữ liệu chia sẻ: ${e instanceof Error ? e.message : String(e)}`,
           }),
       })
 
@@ -146,19 +146,19 @@ const runImport = Effect.fn("Cli.import.body")(function* (file: string, ctx: Ins
     }
 
     if (!response.ok) {
-      process.stdout.write(`Failed to fetch share data: ${response.statusText}`)
+      process.stdout.write(`Không thể tải dữ liệu chia sẻ: ${response.statusText}`)
       process.stdout.write(EOL)
       return
     }
 
     const shareData = yield* Effect.tryPromise({
       try: () => response.json() as Promise<ShareData[]>,
-      catch: () => new CliError({ message: "Share data was not valid JSON" }),
+      catch: () => new CliError({ message: "Dữ liệu chia sẻ không phải JSON hợp lệ" }),
     })
     const transformed = transformShareData(shareData)
 
     if (!transformed) {
-      process.stdout.write(`Share not found or empty: ${slug}`)
+      process.stdout.write(`Không tìm thấy share hoặc share trống: ${slug}`)
       process.stdout.write(EOL)
       return
     }
@@ -171,7 +171,7 @@ const runImport = Effect.fn("Cli.import.body")(function* (file: string, ctx: Ins
   }
 
   if (!exportData) {
-    process.stdout.write(`Failed to read session data`)
+    process.stdout.write(`Không thể đọc dữ liệu session`)
     process.stdout.write(EOL)
     return
   }

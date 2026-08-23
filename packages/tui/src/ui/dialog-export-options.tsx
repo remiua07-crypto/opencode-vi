@@ -39,7 +39,7 @@ export function DialogExportOptions(props: DialogExportOptionsProps) {
     bindings: [
       {
         key: "tab",
-        desc: "Next export option",
+        desc: "Tùy chọn xuất tiếp theo",
         group: "Dialog",
         cmd: () => {
           const order: Array<"filename" | "thinking" | "toolDetails" | "assistantMetadata" | "openWithoutSaving"> = [
@@ -62,7 +62,7 @@ export function DialogExportOptions(props: DialogExportOptionsProps) {
     bindings: [
       {
         key: "space",
-        desc: "Toggle export option",
+        desc: "Bật/tắt tùy chọn xuất",
         group: "Dialog",
         cmd: () => {
           if (store.active === "thinking") setStore("thinking", !store.thinking)
@@ -87,7 +87,7 @@ export function DialogExportOptions(props: DialogExportOptionsProps) {
     <box paddingLeft={2} paddingRight={2} gap={1}>
       <box flexDirection="row" justifyContent="space-between">
         <text attributes={TextAttributes.BOLD} fg={theme.text}>
-          Export Options
+          Tùy chọn xuất
         </text>
         <text fg={theme.textMuted} onMouseUp={() => dialog.clear()}>
           esc
@@ -95,7 +95,7 @@ export function DialogExportOptions(props: DialogExportOptionsProps) {
       </box>
       <box gap={1}>
         <box>
-          <text fg={theme.text}>Filename:</text>
+          <text fg={theme.text}>Tên file:</text>
         </box>
         <textarea
           onSubmit={() => {
@@ -113,7 +113,7 @@ export function DialogExportOptions(props: DialogExportOptionsProps) {
             val.traits = { status: "FILENAME" }
           }}
           initialValue={props.defaultFilename}
-          placeholder="Enter filename"
+          placeholder="Nhập tên file"
           placeholderColor={theme.textMuted}
           textColor={theme.text}
           focusedTextColor={theme.text}
@@ -132,7 +132,7 @@ export function DialogExportOptions(props: DialogExportOptionsProps) {
           <text fg={store.active === "thinking" ? theme.primary : theme.textMuted}>
             {store.thinking ? "[x]" : "[ ]"}
           </text>
-          <text fg={store.active === "thinking" ? theme.primary : theme.text}>Include thinking</text>
+          <text fg={store.active === "thinking" ? theme.primary : theme.text}>Bao gồm suy luận</text>
         </box>
         <box
           flexDirection="row"
@@ -144,7 +144,7 @@ export function DialogExportOptions(props: DialogExportOptionsProps) {
           <text fg={store.active === "toolDetails" ? theme.primary : theme.textMuted}>
             {store.toolDetails ? "[x]" : "[ ]"}
           </text>
-          <text fg={store.active === "toolDetails" ? theme.primary : theme.text}>Include tool details</text>
+          <text fg={store.active === "toolDetails" ? theme.primary : theme.text}>Bao gồm chi tiết tool</text>
         </box>
         <box
           flexDirection="row"
@@ -156,7 +156,7 @@ export function DialogExportOptions(props: DialogExportOptionsProps) {
           <text fg={store.active === "assistantMetadata" ? theme.primary : theme.textMuted}>
             {store.assistantMetadata ? "[x]" : "[ ]"}
           </text>
-          <text fg={store.active === "assistantMetadata" ? theme.primary : theme.text}>Include assistant metadata</text>
+          <text fg={store.active === "assistantMetadata" ? theme.primary : theme.text}>Bao gồm metadata của assistant</text>
         </box>
         <box
           flexDirection="row"
@@ -173,14 +173,14 @@ export function DialogExportOptions(props: DialogExportOptionsProps) {
       </box>
       <Show when={store.active !== "filename"}>
         <text fg={theme.textMuted} paddingBottom={1}>
-          Press <span style={{ fg: theme.text }}>space</span> to toggle, <span style={{ fg: theme.text }}>return</span>{" "}
-          to confirm
+          Nhấn <span style={{ fg: theme.text }}>space</span> để bật/tắt,{" "}
+          <span style={{ fg: theme.text }}>return</span> để xác nhận
         </text>
       </Show>
       <Show when={store.active === "filename"}>
         <text fg={theme.textMuted} paddingBottom={1}>
-          Press <span style={{ fg: theme.text }}>return</span> to confirm, <span style={{ fg: theme.text }}>tab</span>{" "}
-          for options
+          Nhấn <span style={{ fg: theme.text }}>return</span> để xác nhận,{" "}
+          <span style={{ fg: theme.text }}>tab</span> để chuyển tùy chọn
         </text>
       </Show>
     </box>

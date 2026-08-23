@@ -31,8 +31,8 @@ export function formatTranscript(
   const providers = Model.index(options.providers)
   let transcript = `# ${session.title}\n\n`
   transcript += `**Session ID:** ${session.id}\n`
-  transcript += `**Created:** ${new Date(session.time.created).toLocaleString()}\n`
-  transcript += `**Updated:** ${new Date(session.time.updated).toLocaleString()}\n\n`
+  transcript += `**Đã tạo:** ${new Date(session.time.created).toLocaleString()}\n`
+  transcript += `**Đã cập nhật:** ${new Date(session.time.updated).toLocaleString()}\n\n`
   transcript += `---\n\n`
 
   for (const msg of messages.toSorted(

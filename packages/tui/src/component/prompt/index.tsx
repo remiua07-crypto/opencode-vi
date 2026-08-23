@@ -216,7 +216,7 @@ export function Prompt(props: PromptProps) {
   function promptModelWarning() {
     toast.show({
       variant: "warning",
-      message: "Connect a provider to send prompts",
+      message: "Kết nối provider để gửi prompt",
       duration: 3000,
     })
     if (sync.data.provider.length === 0) {
@@ -335,7 +335,7 @@ export function Prompt(props: PromptProps) {
   const promptCommands = createMemo(() =>
     [
       {
-        title: "Clear prompt",
+        title: "Xóa prompt",
         name: "prompt.clear",
         category: "Prompt",
         hidden: true,
@@ -345,7 +345,7 @@ export function Prompt(props: PromptProps) {
         },
       },
       {
-        title: "Submit prompt",
+        title: "Gửi prompt",
         name: "prompt.submit",
         category: "Prompt",
         hidden: true,
@@ -358,7 +358,7 @@ export function Prompt(props: PromptProps) {
         },
       },
       {
-        title: "Remove editor context",
+        title: "Xóa ngữ cảnh trình soạn thảo",
         name: "prompt.editor_context.clear",
         category: "Prompt",
         enabled: Boolean(editorContext()),
@@ -368,7 +368,7 @@ export function Prompt(props: PromptProps) {
         },
       },
       {
-        title: "Paste",
+        title: "Dán",
         name: "prompt.paste",
         category: "Prompt",
         hidden: true,
@@ -390,7 +390,7 @@ export function Prompt(props: PromptProps) {
         },
       },
       {
-        title: "Interrupt session",
+        title: "Ngắt session",
         name: "session.interrupt",
         category: "Session",
         hidden: true,
@@ -421,7 +421,7 @@ export function Prompt(props: PromptProps) {
         },
       },
       {
-        title: "Open editor",
+        title: "Mở trình soạn thảo ngoài",
         category: "Session",
         name: "prompt.editor",
         slashName: "editor",
@@ -534,7 +534,7 @@ export function Prompt(props: PromptProps) {
       },
       {
         title: "Warp",
-        desc: "Change the workspace for the session",
+        desc: "Đổi workspace cho session",
         name: "workspace.set",
         category: "Session",
         enabled: Flag.OPENCODE_EXPERIMENTAL_WORKSPACES,
@@ -544,8 +544,8 @@ export function Prompt(props: PromptProps) {
         },
       },
       {
-        title: "Move session",
-        desc: "Move to another project dir",
+        title: "Di chuyển session",
+        desc: "Chuyển sang thư mục dự án khác",
         name: "session.move",
         category: "Session",
         slashName: "move",
@@ -754,7 +754,7 @@ export function Prompt(props: PromptProps) {
         },
       },
       {
-        title: "Stash pop",
+        title: "Lấy lại prompt đã stash",
         name: "prompt.stash.pop",
         category: "Prompt",
         enabled: stash.list().length > 0,
@@ -770,7 +770,7 @@ export function Prompt(props: PromptProps) {
         },
       },
       {
-        title: "Stash list",
+        title: "Liệt kê prompt đã stash",
         name: "prompt.stash.list",
         category: "Prompt",
         enabled: stash.list().length > 0,
@@ -829,7 +829,7 @@ export function Prompt(props: PromptProps) {
       bindings: [
         {
           key: "!",
-          desc: "Shell mode",
+          desc: "Chế độ shell",
           group: "Prompt",
           cmd: () => {
             setStore("placeholder", randomIndex(shell().length))
@@ -844,7 +844,7 @@ export function Prompt(props: PromptProps) {
     return {
       target: inputTarget,
       enabled: inputTarget() !== undefined && store.mode === "shell",
-      bindings: [{ key: "escape", desc: "Exit shell mode", group: "Prompt", cmd: () => setStore("mode", "normal") }],
+      bindings: [{ key: "escape", desc: "Thoát chế độ shell", group: "Prompt", cmd: () => setStore("mode", "normal") }],
     }
   })
 
@@ -855,7 +855,7 @@ export function Prompt(props: PromptProps) {
         cursorVersion()
         return inputTarget() !== undefined && store.mode === "shell" && input?.visualCursor.offset === 0
       })(),
-      bindings: [{ key: "backspace", desc: "Exit shell mode", group: "Prompt", cmd: () => setStore("mode", "normal") }],
+      bindings: [{ key: "backspace", desc: "Thoát chế độ shell", group: "Prompt", cmd: () => setStore("mode", "normal") }],
     }
   })
 
@@ -869,7 +869,7 @@ export function Prompt(props: PromptProps) {
       commands: [
         {
           name: "prompt.history.previous",
-          title: "Previous prompt history",
+          title: "Mục lịch sử prompt trước đó",
           category: "Prompt",
           run() {
             if (input.cursorOffset !== 0) {
@@ -901,7 +901,7 @@ export function Prompt(props: PromptProps) {
       commands: [
         {
           name: "prompt.history.next",
-          title: "Next prompt history",
+          title: "Mục lịch sử prompt kế tiếp",
           category: "Prompt",
           run() {
             if (input.cursorOffset !== input.plainText.length) {
@@ -1013,7 +1013,7 @@ export function Prompt(props: PromptProps) {
         console.log("Creating a session failed:", res.error)
 
         toast.show({
-          message: "Creating a session failed. Open console for more details.",
+          message: "Tạo session thất bại. Mở console để xem chi tiết.",
           variant: "error",
         })
 
@@ -1112,7 +1112,7 @@ export function Prompt(props: PromptProps) {
         )
         .catch((error) => {
           toast.show({
-            title: "Failed to send prompt",
+            title: "Gửi prompt thất bại",
             message: errorMessage(error),
             variant: "error",
           })
@@ -1189,7 +1189,7 @@ export function Prompt(props: PromptProps) {
       const attachment = await readLocalAttachment(filepath)
       const filename = path.basename(filepath)
       if (attachment?.type === "text") {
-        pasteText(attachment.content, `[SVG: ${filename ?? "image"}]`)
+        pasteText(attachment.content, `[SVG: ${filename ?? "ảnh"}]`)
         return
       }
       if (attachment?.type === "binary") {
@@ -1208,7 +1208,7 @@ export function Prompt(props: PromptProps) {
       (lineCount >= 3 || pastedContent.length > 150) &&
       kv.get("paste_summary_enabled", !sync.data.config.experimental?.disable_paste_summary)
     ) {
-      pasteText(pastedContent, `[Pasted ~${lineCount} lines]`)
+      pasteText(pastedContent, `[Đã dán ~${lineCount} dòng]`)
       return
     }
 
@@ -1230,7 +1230,7 @@ export function Prompt(props: PromptProps) {
       if (pdf) return x.mime === "application/pdf"
       return x.mime.startsWith("image/")
     }).length
-    const virtualText = pdf ? `[PDF ${count + 1}]` : `[Image ${count + 1}]`
+    const virtualText = pdf ? `[PDF ${count + 1}]` : `[Ảnh ${count + 1}]`
     const extmarkEnd = extmarkStart + virtualText.length
     const textToInsert = virtualText + " "
 
@@ -1313,10 +1313,10 @@ export function Prompt(props: PromptProps) {
     if (store.mode === "shell") {
       if (!shell().length) return undefined
       const example = shell()[store.placeholder % shell().length]
-      return `Run a command... "${example}"`
+      return `Chạy lệnh... "${example}"`
     }
     if (!list().length) return undefined
-    return `Ask anything... "${list()[store.placeholder % list().length]}"`
+    return `Hỏi bất cứ điều gì... "${list()[store.placeholder % list().length]}"`
   })
 
   const spinnerDef = createMemo(() => {
@@ -1536,7 +1536,7 @@ export function Prompt(props: PromptProps) {
                         const r = retry()
                         if (!r) return
                         if (r.message.includes("exceeded your current quota") && r.message.includes("gemini"))
-                          return "gemini is way too hot right now"
+                          return "gemini đang quá nóng vào lúc này"
                         if (r.message.length > 80) return r.message.slice(0, 80) + "..."
                         return r.message
                       })
@@ -1560,7 +1560,7 @@ export function Prompt(props: PromptProps) {
                         const r = retry()
                         if (!r) return
                         if (isTruncated()) {
-                          void DialogAlert.show(dialog, "Retry Error", r.message)
+                          void DialogAlert.show(dialog, "Lỗi thử lại", r.message)
                         }
                       }
 
@@ -1568,9 +1568,9 @@ export function Prompt(props: PromptProps) {
                         const r = retry()
                         if (!r) return ""
                         const baseMessage = message()
-                        const truncatedHint = isTruncated() ? " (click to expand)" : ""
+                        const truncatedHint = isTruncated() ? " (bấm để mở rộng)" : ""
                         const duration = formatDuration(seconds())
-                        const retryInfo = ` [retrying ${duration ? `in ${duration} ` : ""}attempt #${r.attempt}]`
+                        const retryInfo = ` [đang thử lại ${duration ? `sau ${duration} ` : ""}lần #${r.attempt}]`
                         return baseMessage + truncatedHint + retryInfo
                       }
 
@@ -1587,7 +1587,7 @@ export function Prompt(props: PromptProps) {
                 <text fg={store.interrupt > 0 ? theme.primary : theme.text}>
                   esc{" "}
                   <span style={{ fg: store.interrupt > 0 ? theme.primary : theme.textMuted }}>
-                    {store.interrupt > 0 ? "again to interrupt" : "interrupt"}
+                    {store.interrupt > 0 ? "lần nữa để ngắt" : "ngắt"}
                   </span>
                 </text>
               </box>
@@ -1610,10 +1610,10 @@ export function Prompt(props: PromptProps) {
                       const item = label()
                       if (item.type === "new") {
                         if (workspace.creating())
-                          return `Creating ${item.workspaceType}${".".repeat(workspace.creatingDots())}`
+                          return `Đang tạo ${item.workspaceType}${".".repeat(workspace.creatingDots())}`
                         return (
                           <>
-                            Workspace <span style={{ fg: theme.textMuted }}>(new {item.workspaceType})</span>
+                            Workspace <span style={{ fg: theme.textMuted }}>(mới {item.workspaceType})</span>
                           </>
                         )
                       }
@@ -1639,7 +1639,7 @@ export function Prompt(props: PromptProps) {
             </Match>
             <Match when={move.pendingNew()}>
               <box paddingLeft={3}>
-                <text fg={theme.accent}>(new working copy)</text>
+                <text fg={theme.accent}>(bản sao làm việc mới)</text>
               </box>
             </Match>
             <Match when={true}>
@@ -1676,12 +1676,12 @@ export function Prompt(props: PromptProps) {
                     </Match>
                   </Switch>
                   <text fg={theme.text}>
-                    {paletteShortcut()} <span style={{ fg: theme.textMuted }}>commands</span>
+                    {paletteShortcut()} <span style={{ fg: theme.textMuted }}>lệnh</span>
                   </text>
                 </Match>
                 <Match when={store.mode === "shell"}>
                   <text fg={theme.text}>
-                    esc <span style={{ fg: theme.textMuted }}>exit shell mode</span>
+                    esc <span style={{ fg: theme.textMuted }}>thoát chế độ shell</span>
                   </text>
                 </Match>
               </Switch>

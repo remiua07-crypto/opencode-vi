@@ -135,7 +135,7 @@ function eventPatch(next: FooterEvent): FooterPatch | undefined {
   if (next.type === "turn.send") {
     return {
       phase: "running",
-      status: "sending prompt",
+      status: "đang gửi prompt",
       queue: next.queue,
       interrupt: 0,
       exit: 0,
@@ -145,7 +145,7 @@ function eventPatch(next: FooterEvent): FooterPatch | undefined {
   if (next.type === "turn.wait") {
     return {
       phase: "running",
-      status: "waiting for assistant",
+      status: "đang chờ assistant",
     }
   }
 
@@ -756,7 +756,7 @@ export class RunFooter implements FooterApi {
     }
 
     if (this.prompts.size === 0) {
-      this.setNotice("input queue unavailable")
+      this.setNotice("hàng đợi input không khả dụng")
       return false
     }
 
@@ -794,7 +794,7 @@ export class RunFooter implements FooterApi {
   private handleCycle = (): void => {
     const result = this.options.onCycleVariant?.()
     if (!result) {
-      this.setNotice("no variants available")
+      this.setNotice("không có variant khả dụng")
       return
     }
 
@@ -813,7 +813,7 @@ export class RunFooter implements FooterApi {
     }
 
     this.patch(patch)
-    this.setNotice(result.status ?? "variant updated")
+    this.setNotice(result.status ?? "đã cập nhật variant")
   }
 
   private handleModelSelect = (model: NonNullable<RunInput["model"]>): void => {

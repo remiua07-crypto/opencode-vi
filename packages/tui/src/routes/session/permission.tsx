@@ -80,7 +80,7 @@ function EditBody(props: { request: PermissionRequest }) {
       </Show>
       <Show when={!diff()}>
         <box paddingLeft={1}>
-          <text fg={theme.textMuted}>No diff provided</text>
+          <text fg={theme.textMuted}>Không có Diff</text>
         </box>
       </Show>
     </box>
@@ -137,15 +137,15 @@ export function PermissionPrompt(props: { request: PermissionRequest; directory?
     <Switch>
       <Match when={store.stage === "always"}>
         <Prompt
-          title="Always allow"
+          title="Luôn cho phép"
           body={
             <Switch>
               <Match when={props.request.always.length === 1 && props.request.always[0] === "*"}>
-                <TextBody title={"This will allow " + props.request.permission + " until OpenCode is restarted."} />
+                <TextBody title={"Điều này sẽ cho phép " + props.request.permission + " cho đến khi OpenCode được khởi động lại."} />
               </Match>
               <Match when={true}>
                 <box paddingLeft={1} gap={1}>
-                  <text fg={theme.textMuted}>This will allow the following patterns until OpenCode is restarted</text>
+                  <text fg={theme.textMuted}>Điều này sẽ cho phép các pattern sau cho đến khi OpenCode được khởi động lại</text>
                   <box>
                     <For each={props.request.always}>
                       {(pattern) => (
@@ -160,7 +160,7 @@ export function PermissionPrompt(props: { request: PermissionRequest; directory?
               </Match>
             </Switch>
           }
-          options={{ confirm: "Confirm", cancel: "Cancel" }}
+          options={{ confirm: "Xác nhận", cancel: "Hủy" }}
           escapeKey="cancel"
           onSelect={(option) => {
             setStore("stage", "permission")
@@ -201,7 +201,7 @@ export function PermissionPrompt(props: { request: PermissionRequest; directory?
               const filepath = typeof raw === "string" ? raw : ""
               return {
                 icon: "→",
-                title: `Edit ${pathFormatter.format(filepath)}`,
+                title: `Sửa ${pathFormatter.format(filepath)}`,
                 body: <EditBody request={props.request} />,
               }
             }
@@ -211,11 +211,11 @@ export function PermissionPrompt(props: { request: PermissionRequest; directory?
               const filePath = typeof raw === "string" ? raw : ""
               return {
                 icon: "→",
-                title: `Read ${pathFormatter.format(filePath)}`,
+                title: `Đọc ${pathFormatter.format(filePath)}`,
                 body: (
                   <Show when={filePath}>
                     <box paddingLeft={1}>
-                      <text fg={theme.textMuted}>{"Path: " + pathFormatter.format(filePath)}</text>
+                      <text fg={theme.textMuted}>{"Đường dẫn: " + pathFormatter.format(filePath)}</text>
                     </box>
                   </Show>
                 ),
@@ -257,11 +257,11 @@ export function PermissionPrompt(props: { request: PermissionRequest; directory?
               const dir = typeof raw === "string" ? raw : ""
               return {
                 icon: "→",
-                title: `List ${pathFormatter.format(dir)}`,
+                title: `Liệt kê ${pathFormatter.format(dir)}`,
                 body: (
                   <Show when={dir}>
                     <box paddingLeft={1}>
-                      <text fg={theme.textMuted}>{"Path: " + pathFormatter.format(dir)}</text>
+                      <text fg={theme.textMuted}>{"Đường dẫn: " + pathFormatter.format(dir)}</text>
                     </box>
                   </Show>
                 ),
@@ -272,7 +272,7 @@ export function PermissionPrompt(props: { request: PermissionRequest; directory?
               const command = typeof data.command === "string" ? data.command : ""
               return {
                 icon: "#",
-                title: "Shell command",
+                title: "Lệnh shell",
                 body: (
                   <Show when={command}>
                     <box paddingLeft={1}>
@@ -284,7 +284,7 @@ export function PermissionPrompt(props: { request: PermissionRequest; directory?
             }
 
             if (permission === "task") {
-              const type = typeof data.subagent_type === "string" ? data.subagent_type : "Unknown"
+              const type = typeof data.subagent_type === "string" ? data.subagent_type : "Không rõ"
               const desc = typeof data.description === "string" ? data.description : ""
               return {
                 icon: "#",
@@ -322,7 +322,7 @@ export function PermissionPrompt(props: { request: PermissionRequest; directory?
                 body: (
                   <Show when={query}>
                     <box paddingLeft={1}>
-                      <text fg={theme.textMuted}>{"Query: " + query}</text>
+                      <text fg={theme.textMuted}>{"Truy vấn: " + query}</text>
                     </box>
                   </Show>
                 ),
@@ -343,11 +343,11 @@ export function PermissionPrompt(props: { request: PermissionRequest; directory?
 
               return {
                 icon: "←",
-                title: `Access external directory ${dir}`,
+                title: `Truy cập thư mục ngoài ${dir}`,
                 body: (
                   <Show when={patterns.length > 0}>
                     <box paddingLeft={1} gap={1}>
-                      <text fg={theme.textMuted}>Patterns</text>
+                      <text fg={theme.textMuted}>Các pattern</text>
                       <box>
                         <For each={patterns}>{(p) => <text fg={theme.text}>{"- " + p}</text>}</For>
                       </box>
@@ -360,10 +360,10 @@ export function PermissionPrompt(props: { request: PermissionRequest; directory?
             if (permission === "doom_loop") {
               return {
                 icon: "⟳",
-                title: "Continue after repeated failures",
+                title: "Tiếp tục sau nhiều lỗi liên tiếp",
                 body: (
                   <box paddingLeft={1}>
-                    <text fg={theme.textMuted}>This keeps the session running despite repeated failures.</text>
+                    <text fg={theme.textMuted}>Điều này giữ cho session chạy tiếp dù gặp lỗi lặp lại nhiều lần.</text>
                   </box>
                 ),
               }
@@ -371,7 +371,7 @@ export function PermissionPrompt(props: { request: PermissionRequest; directory?
 
             return {
               icon: "⚙",
-              title: `Call tool ${permission}`,
+              title: `Gọi tool ${permission}`,
               body: (
                 <box paddingLeft={1}>
                   <text fg={theme.textMuted}>{"Tool: " + permission}</text>
@@ -386,7 +386,7 @@ export function PermissionPrompt(props: { request: PermissionRequest; directory?
             <box flexDirection="column" gap={0}>
               <box flexDirection="row" gap={1} flexShrink={0}>
                 <text fg={theme.warning}>{"△"}</text>
-                <text fg={theme.text}>Permission required</text>
+                <text fg={theme.text}>Cần cấp quyền</text>
               </box>
               <box flexDirection="row" gap={1} paddingLeft={2} flexShrink={0}>
                 <text fg={theme.textMuted} flexShrink={0}>
@@ -399,10 +399,10 @@ export function PermissionPrompt(props: { request: PermissionRequest; directory?
 
           const body = (
             <Prompt
-              title="Permission required"
+              title="Cần cấp quyền"
               header={header()}
               body={current.body}
-              options={{ once: "Allow once", always: "Allow always", reject: "Reject" }}
+              options={{ once: "Cho phép 1 lần", always: "Luôn cho phép", reject: "Từ chối" }}
               escapeKey="reject"
               fullscreen
               onSelect={(option) => {
@@ -451,7 +451,7 @@ function RejectPrompt(props: { onConfirm: (message: string) => void; onCancel: (
     commands: [
       {
         name: "app.exit",
-        title: "Cancel permission rejection",
+        title: "Hủy từ chối quyền",
         category: "Permission",
         run() {
           props.onCancel()
@@ -459,11 +459,11 @@ function RejectPrompt(props: { onConfirm: (message: string) => void; onCancel: (
       },
     ],
     bindings: [
-      { key: "escape", desc: "Cancel permission rejection", group: "Permission", cmd: () => props.onCancel() },
+      { key: "escape", desc: "Hủy từ chối quyền", group: "Permission", cmd: () => props.onCancel() },
       ...tuiConfig.keybinds.get("app.exit"),
       {
         key: "return",
-        desc: "Confirm permission rejection",
+        desc: "Xác nhận từ chối quyền",
         group: "Permission",
         cmd: () => props.onConfirm(input.plainText),
       },
@@ -480,10 +480,10 @@ function RejectPrompt(props: { onConfirm: (message: string) => void; onCancel: (
       <box gap={1} paddingLeft={1} paddingRight={3} paddingTop={1} paddingBottom={1}>
         <box flexDirection="row" gap={1} paddingLeft={1}>
           <text fg={theme.error}>{"△"}</text>
-          <text fg={theme.text}>Reject permission</text>
+          <text fg={theme.text}>Từ chối quyền</text>
         </box>
         <box paddingLeft={1}>
-          <text fg={theme.textMuted}>Tell OpenCode what to do differently</text>
+          <text fg={theme.textMuted}>Nói cho OpenCode biết cần làm gì khác</text>
         </box>
       </box>
       <box
@@ -511,10 +511,10 @@ function RejectPrompt(props: { onConfirm: (message: string) => void; onCancel: (
         />
         <box flexDirection="row" gap={2} flexShrink={0}>
           <text fg={theme.text}>
-            enter <span style={{ fg: theme.textMuted }}>confirm</span>
+            enter <span style={{ fg: theme.textMuted }}>xác nhận</span>
           </text>
           <text fg={theme.text}>
-            esc <span style={{ fg: theme.textMuted }}>cancel</span>
+            esc <span style={{ fg: theme.textMuted }}>hủy</span>
           </text>
         </box>
       </box>
@@ -547,7 +547,7 @@ function Prompt<const T extends Record<string, string>>(props: {
     commands: [
       {
         name: "app.exit",
-        title: "Reject permission",
+        title: "Từ chối quyền",
         category: "Permission",
         run() {
           if (!props.escapeKey) return
@@ -556,7 +556,7 @@ function Prompt<const T extends Record<string, string>>(props: {
       },
       {
         name: "permission.prompt.fullscreen",
-        title: "Toggle permission fullscreen",
+        title: "Bật/tắt toàn màn hình khung quyền",
         category: "Permission",
         run() {
           if (!props.fullscreen) return
@@ -567,7 +567,7 @@ function Prompt<const T extends Record<string, string>>(props: {
     bindings: [
       {
         key: "left",
-        desc: "Previous permission option",
+        desc: "Tùy chọn quyền trước",
         group: "Permission",
         cmd: () => {
           const idx = keys.indexOf(store.selected)
@@ -577,7 +577,7 @@ function Prompt<const T extends Record<string, string>>(props: {
       },
       {
         key: "h",
-        desc: "Previous permission option",
+        desc: "Tùy chọn quyền trước",
         group: "Permission",
         cmd: () => {
           const idx = keys.indexOf(store.selected)
@@ -587,7 +587,7 @@ function Prompt<const T extends Record<string, string>>(props: {
       },
       {
         key: "right",
-        desc: "Next permission option",
+        desc: "Tùy chọn quyền sau",
         group: "Permission",
         cmd: () => {
           const idx = keys.indexOf(store.selected)
@@ -597,7 +597,7 @@ function Prompt<const T extends Record<string, string>>(props: {
       },
       {
         key: "l",
-        desc: "Next permission option",
+        desc: "Tùy chọn quyền sau",
         group: "Permission",
         cmd: () => {
           const idx = keys.indexOf(store.selected)
@@ -607,7 +607,7 @@ function Prompt<const T extends Record<string, string>>(props: {
       },
       {
         key: "return",
-        desc: "Select permission option",
+        desc: "Chọn tùy chọn quyền",
         group: "Permission",
         cmd: () => props.onSelect(store.selected),
       },
@@ -615,7 +615,7 @@ function Prompt<const T extends Record<string, string>>(props: {
         ? [
             {
               key: "escape",
-              desc: "Reject permission",
+              desc: "Từ chối quyền",
               group: "Permission",
               cmd: () => props.onSelect(props.escapeKey!),
             },
@@ -626,7 +626,7 @@ function Prompt<const T extends Record<string, string>>(props: {
     ],
   }))
 
-  const hint = createMemo(() => (store.expanded ? "minimize" : "fullscreen"))
+  const hint = createMemo(() => (store.expanded ? "thu nhỏ" : "toàn màn hình"))
   useRenderer()
 
   const content = () => (
@@ -701,10 +701,10 @@ function Prompt<const T extends Record<string, string>>(props: {
             </text>
           </Show>
           <text fg={theme.text}>
-            {"⇆"} <span style={{ fg: theme.textMuted }}>select</span>
+            {"⇆"} <span style={{ fg: theme.textMuted }}>chọn</span>
           </text>
           <text fg={theme.text}>
-            enter <span style={{ fg: theme.textMuted }}>confirm</span>
+            enter <span style={{ fg: theme.textMuted }}>xác nhận</span>
           </text>
         </box>
       </box>

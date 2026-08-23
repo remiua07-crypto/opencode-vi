@@ -29,6 +29,7 @@ import { DbCommand } from "./cli/cmd/db"
 import { errorMessage } from "./util/error"
 import { PluginCommand } from "./cli/cmd/plug"
 import { Heap } from "./cli/heap"
+import { ViLocale } from "./cli/locale-vi"
 
 const args = hideBin(process.argv)
 
@@ -45,22 +46,23 @@ function show(out: string) {
 const cli = yargs(args)
   .parserConfiguration({ "populate--": true })
   .scriptName("opencode")
+  .updateLocale(ViLocale.strings)
   .wrap(100)
-  .help("help", "show help")
+  .help("help", "xem trợ giúp")
   .alias("help", "h")
-  .version("version", "show version number", InstallationVersion)
+  .version("version", "xem số phiên bản", InstallationVersion)
   .alias("version", "v")
   .option("print-logs", {
-    describe: "print logs to stderr",
+    describe: "in log ra stderr",
     type: "boolean",
   })
   .option("log-level", {
-    describe: "log level",
+    describe: "mức độ log",
     type: "string",
     choices: ["DEBUG", "INFO", "WARN", "ERROR"],
   })
   .option("pure", {
-    describe: "run without external plugins",
+    describe: "chạy mà không tải plugin bên ngoài",
     type: "boolean",
   })
   .middleware(async (opts) => {
@@ -77,7 +79,7 @@ const cli = yargs(args)
     process.env.OPENCODE_PID = String(process.pid)
   })
   .usage("")
-  .completion("completion", "generate shell completion script")
+  .completion("completion", "tạo script tự hoàn thành cho shell")
   .command(AcpCommand)
   .command(McpCommand)
   .command(TuiThreadCommand)
@@ -102,15 +104,8 @@ const cli = yargs(args)
   .command(PluginCommand)
   .command(DbCommand)
   .fail((msg, err) => {
-    if (
-      msg?.startsWith("Unknown argument") ||
-      msg?.startsWith("Not enough non-option arguments") ||
-      msg?.startsWith("Invalid values:")
-    ) {
-      if (err) throw err
-      cli.showHelp(show)
-    }
     if (err) throw err
+    if (msg) cli.showHelp(show)
     process.exit(1)
   })
   .strict()

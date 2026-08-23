@@ -107,7 +107,7 @@ function init() {
     bindings: [
       {
         key: "escape",
-        desc: "Close dialog",
+        desc: "Đóng hộp thoại",
         group: "Dialog",
         cmd: () => {
           if (renderer.getSelection()) {
@@ -121,7 +121,7 @@ function init() {
       },
       {
         key: "ctrl+c",
-        desc: "Close dialog",
+        desc: "Đóng hộp thoại",
         group: "Dialog",
         cmd: () => {
           if (renderer.getSelection()) {
@@ -189,7 +189,7 @@ export function DialogProvider(props: ParentProps) {
     const text = renderer.getSelection()?.getSelectedText()
     if (!text || !clipboard.write) return false
     void clipboard.write(text).then(
-      () => toast.show({ message: "Copied to clipboard", variant: "info" }),
+      () => toast.show({ message: "Đã sao chép vào clipboard", variant: "info" }),
       (error) => toast.error(error),
     )
     renderer.clearSelection()

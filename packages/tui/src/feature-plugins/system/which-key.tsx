@@ -46,7 +46,7 @@ const MAX_PANEL_HEIGHT = 16
 const PANEL_TOP_PADDING = 1
 const FOOTER_HEIGHT = 1
 const FOOTER_MARGIN = 1
-const UNKNOWN = "Unknown"
+const UNKNOWN = "Không rõ"
 
 type Layout = "dock" | "overlay"
 
@@ -175,7 +175,7 @@ function HomeHint(props: { api: TuiPluginApi }) {
   return (
     <box width="100%" maxWidth={75} alignItems="center" paddingTop={1} flexShrink={0}>
       <text fg={look().muted} wrapMode="none">
-        Show keyboard shortcuts with <span style={{ fg: look().subtle }}>{trigger() || command.toggle}</span>
+        Hiện phím tắt với <span style={{ fg: look().subtle }}>{trigger() || command.toggle}</span>
       </text>
     </box>
   )
@@ -289,8 +289,8 @@ function WhichKeyPanel(props: {
     commands: [
       {
         name: command.groupPrevious,
-        title: "Previous key binding group",
-        desc: "Show the previous which-key group",
+        title: "Nhóm phím tắt trước đó",
+        desc: "Hiện nhóm which-key trước đó",
         category: "System",
         run() {
           moveGroup(-1)
@@ -298,8 +298,8 @@ function WhichKeyPanel(props: {
       },
       {
         name: command.groupNext,
-        title: "Next key binding group",
-        desc: "Show the next which-key group",
+        title: "Nhóm phím tắt kế tiếp",
+        desc: "Hiện nhóm which-key kế tiếp",
         category: "System",
         run() {
           moveGroup(1)
@@ -307,8 +307,8 @@ function WhichKeyPanel(props: {
       },
       {
         name: command.scrollUp,
-        title: "Scroll key bindings up",
-        desc: "Scroll the which-key panel up",
+        title: "Cuộn phím tắt lên",
+        desc: "Cuộn bảng which-key lên",
         category: "System",
         run() {
           scroll(-columns())
@@ -316,8 +316,8 @@ function WhichKeyPanel(props: {
       },
       {
         name: command.scrollDown,
-        title: "Scroll key bindings down",
-        desc: "Scroll the which-key panel down",
+        title: "Cuộn phím tắt xuống",
+        desc: "Cuộn bảng which-key xuống",
         category: "System",
         run() {
           scroll(columns())
@@ -325,8 +325,8 @@ function WhichKeyPanel(props: {
       },
       {
         name: command.pageUp,
-        title: "Page key bindings up",
-        desc: "Page the which-key panel up",
+        title: "Lên trang phím tắt",
+        desc: "Lên một trang bảng which-key",
         category: "System",
         run() {
           scroll(-pageSize())
@@ -334,8 +334,8 @@ function WhichKeyPanel(props: {
       },
       {
         name: command.pageDown,
-        title: "Page key bindings down",
-        desc: "Page the which-key panel down",
+        title: "Xuống trang phím tắt",
+        desc: "Xuống một trang bảng which-key",
         category: "System",
         run() {
           scroll(pageSize())
@@ -343,8 +343,8 @@ function WhichKeyPanel(props: {
       },
       {
         name: command.home,
-        title: "First key binding",
-        desc: "Jump to the first which-key binding",
+        title: "Phím tắt đầu tiên",
+        desc: "Nhảy đến phím tắt which-key đầu tiên",
         category: "System",
         run() {
           setOffset(0)
@@ -352,8 +352,8 @@ function WhichKeyPanel(props: {
       },
       {
         name: command.end,
-        title: "Last key binding",
-        desc: "Jump to the last which-key binding",
+        title: "Phím tắt cuối cùng",
+        desc: "Nhảy đến phím tắt which-key cuối cùng",
         category: "System",
         run() {
           setOffset(maxOffset())
@@ -455,7 +455,7 @@ function WhichKeyPanel(props: {
           <box height={TAB_CONTENT_GAP} flexShrink={0} />
         </Show>
         <box height={rows()} flexShrink={0} flexDirection="column">
-          <Show when={shown().length > 0} fallback={<text fg={look().muted}>No reachable bindings</text>}>
+          <Show when={shown().length > 0} fallback={<text fg={look().muted}>Không có phím tắt khả dụng</text>}>
             <For each={rowIndexes()}>
               {(row) => (
                 <box width="100%" flexDirection="row" justifyContent="center" gap={COLUMN_GAP}>
@@ -514,7 +514,7 @@ function WhichKeyPanel(props: {
           <box width="100%" flexDirection="row" justifyContent="space-between" flexShrink={0}>
             <box>
               <text fg={look().text} wrapMode="none">
-                toggle <span style={{ fg: look().subtle }}>{trigger() || command.toggle}</span>
+                bật/tắt <span style={{ fg: look().subtle }}>{trigger() || command.toggle}</span>
               </text>
             </box>
             <box>
@@ -539,8 +539,8 @@ const tui: TuiPlugin = async (api) => {
     commands: [
       {
         name: command.toggle,
-        title: "Show key bindings",
-        desc: "Toggle which-key overlay",
+        title: "Hiện phím tắt",
+        desc: "Bật/tắt bảng which-key",
         category: "System",
         run() {
           setPinned((value) => !value)
@@ -548,8 +548,8 @@ const tui: TuiPlugin = async (api) => {
       },
       {
         name: command.toggleLayout,
-        title: "Toggle key bindings layout",
-        desc: "Switch which-key between dock and overlay mode",
+        title: "Đổi bố cục phím tắt",
+        desc: "Chuyển which-key giữa chế độ dock và overlay",
         category: "System",
         run() {
           setMode((value) => {
@@ -561,8 +561,8 @@ const tui: TuiPlugin = async (api) => {
       },
       {
         name: command.togglePending,
-        title: "Toggle pending key preview",
-        desc: "Automatically show which-key for pending key sequences in overlay mode",
+        title: "Bật/tắt xem trước chuỗi phím đang chờ",
+        desc: "Tự động hiện which-key cho chuỗi phím đang chờ ở chế độ overlay",
         category: "System",
         run() {
           setPendingPreview((value) => {

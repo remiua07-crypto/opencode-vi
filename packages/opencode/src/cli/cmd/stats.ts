@@ -48,22 +48,22 @@ interface SessionStats {
 
 export const StatsCommand = effectCmd({
   command: "stats",
-  describe: "show token usage and cost statistics",
+  describe: "xem thống kê sử dụng token và chi phí",
   builder: (yargs) =>
     yargs
       .option("days", {
-        describe: "show stats for the last N days (default: all time)",
+        describe: "xem thống kê trong N ngày gần nhất (mặc định: toàn bộ)",
         type: "number",
       })
       .option("tools", {
-        describe: "number of tools to show (default: all)",
+        describe: "số tool hiển thị (mặc định: tất cả)",
         type: "number",
       })
       .option("models", {
-        describe: "show model statistics (default: hidden). Pass a number to show top N, otherwise shows all",
+        describe: "hiển thị thống kê model (mặc định: ẩn). Truyền một số để hiển thị top N, nếu không hiển thị tất cả",
       })
       .option("project", {
-        describe: "filter by project (default: all projects, empty string: current project)",
+        describe: "lọc theo project (mặc định: tất cả project, chuỗi rỗng: project hiện tại)",
         type: "string",
       }),
   handler: Effect.fn("Cli.stats")(function* (args) {
@@ -147,7 +147,7 @@ const aggregateSessionStats = Effect.fn("Cli.stats.aggregate")(function* (
   }
 
   if (filteredSessions.length > 1000) {
-    console.log(`Large dataset detected (${filteredSessions.length} sessions). This may take a while...`)
+    console.log(`Phát hiện dữ liệu lớn (${filteredSessions.length} session). Có thể mất một lúc...`)
   }
 
   if (filteredSessions.length === 0) {
@@ -301,30 +301,30 @@ export function displayStats(stats: SessionStats, toolLimit?: number, modelLimit
 
   // Overview section
   console.log("┌────────────────────────────────────────────────────────┐")
-  console.log("│                       OVERVIEW                         │")
+  console.log("│                      TỔNG QUAN                         │")
   console.log("├────────────────────────────────────────────────────────┤")
   console.log(renderRow("Sessions", stats.totalSessions.toLocaleString()))
-  console.log(renderRow("Messages", stats.totalMessages.toLocaleString()))
-  console.log(renderRow("Days", stats.days.toString()))
+  console.log(renderRow("Tin nhắn", stats.totalMessages.toLocaleString()))
+  console.log(renderRow("Ngày", stats.days.toString()))
   console.log("└────────────────────────────────────────────────────────┘")
   console.log()
 
   // Cost & Tokens section
   console.log("┌────────────────────────────────────────────────────────┐")
-  console.log("│                    COST & TOKENS                       │")
+  console.log("│                   CHI PHÍ & TOKEN                      │")
   console.log("├────────────────────────────────────────────────────────┤")
   const cost = isNaN(stats.totalCost) ? 0 : stats.totalCost
   const costPerDay = isNaN(stats.costPerDay) ? 0 : stats.costPerDay
   const tokensPerSession = isNaN(stats.tokensPerSession) ? 0 : stats.tokensPerSession
-  console.log(renderRow("Total Cost", `$${cost.toFixed(2)}`))
-  console.log(renderRow("Avg Cost/Day", `$${costPerDay.toFixed(2)}`))
-  console.log(renderRow("Avg Tokens/Session", formatNumber(Math.round(tokensPerSession))))
+  console.log(renderRow("Tổng chi phí", `$${cost.toFixed(2)}`))
+  console.log(renderRow("TB Chi phí/Ngày", `$${costPerDay.toFixed(2)}`))
+  console.log(renderRow("TB Token/Session", formatNumber(Math.round(tokensPerSession))))
   const medianTokensPerSession = isNaN(stats.medianTokensPerSession) ? 0 : stats.medianTokensPerSession
-  console.log(renderRow("Median Tokens/Session", formatNumber(Math.round(medianTokensPerSession))))
-  console.log(renderRow("Input", formatNumber(stats.totalTokens.input)))
-  console.log(renderRow("Output", formatNumber(stats.totalTokens.output)))
-  console.log(renderRow("Cache Read", formatNumber(stats.totalTokens.cache.read)))
-  console.log(renderRow("Cache Write", formatNumber(stats.totalTokens.cache.write)))
+  console.log(renderRow("Trung vị Token/Session", formatNumber(Math.round(medianTokensPerSession))))
+  console.log(renderRow("Token vào", formatNumber(stats.totalTokens.input)))
+  console.log(renderRow("Token ra", formatNumber(stats.totalTokens.output)))
+  console.log(renderRow("Cache đọc", formatNumber(stats.totalTokens.cache.read)))
+  console.log(renderRow("Cache ghi", formatNumber(stats.totalTokens.cache.write)))
   console.log("└────────────────────────────────────────────────────────┘")
   console.log()
 
@@ -334,17 +334,17 @@ export function displayStats(stats: SessionStats, toolLimit?: number, modelLimit
     const modelsToDisplay = modelLimit === Infinity ? sortedModels : sortedModels.slice(0, modelLimit)
 
     console.log("┌────────────────────────────────────────────────────────┐")
-    console.log("│                      MODEL USAGE                       │")
+    console.log("│                     SỬ DỤNG MODEL                      │")
     console.log("├────────────────────────────────────────────────────────┤")
 
     for (const [model, usage] of modelsToDisplay) {
       console.log(`│ ${model.padEnd(54)} │`)
-      console.log(renderRow("  Messages", usage.messages.toLocaleString()))
-      console.log(renderRow("  Input Tokens", formatNumber(usage.tokens.input)))
-      console.log(renderRow("  Output Tokens", formatNumber(usage.tokens.output)))
-      console.log(renderRow("  Cache Read", formatNumber(usage.tokens.cache.read)))
-      console.log(renderRow("  Cache Write", formatNumber(usage.tokens.cache.write)))
-      console.log(renderRow("  Cost", `$${usage.cost.toFixed(4)}`))
+      console.log(renderRow("  Tin nhắn", usage.messages.toLocaleString()))
+      console.log(renderRow("  Token vào", formatNumber(usage.tokens.input)))
+      console.log(renderRow("  Token ra", formatNumber(usage.tokens.output)))
+      console.log(renderRow("  Cache đọc", formatNumber(usage.tokens.cache.read)))
+      console.log(renderRow("  Cache ghi", formatNumber(usage.tokens.cache.write)))
+      console.log(renderRow("  Chi phí", `$${usage.cost.toFixed(4)}`))
       console.log("├────────────────────────────────────────────────────────┤")
     }
     // Remove last separator and add bottom border
@@ -359,7 +359,7 @@ export function displayStats(stats: SessionStats, toolLimit?: number, modelLimit
     const toolsToDisplay = toolLimit ? sortedTools.slice(0, toolLimit) : sortedTools
 
     console.log("┌────────────────────────────────────────────────────────┐")
-    console.log("│                      TOOL USAGE                        │")
+    console.log("│                      SỬ DỤNG TOOL                      │")
     console.log("├────────────────────────────────────────────────────────┤")
 
     const maxCount = Math.max(...toolsToDisplay.map(([, count]) => count))

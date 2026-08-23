@@ -221,15 +221,15 @@ function sanitize(data: { info: Session.Info; messages: SessionV1.WithParts[] })
 
 export const ExportCommand = effectCmd({
   command: "export [sessionID]",
-  describe: "export session data as JSON",
+  describe: "export dữ liệu session ra JSON",
   builder: (yargs) =>
     yargs
       .positional("sessionID", {
-        describe: "session id to export",
+        describe: "id session cần export",
         type: "string",
       })
       .option("sanitize", {
-        describe: "redact sensitive transcript and file data",
+        describe: "ẩn các dữ liệu nhạy cảm trong transcript và file",
         type: "boolean",
       }),
   handler: Effect.fn("Cli.export")(function* (args) {
@@ -240,7 +240,7 @@ export const ExportCommand = effectCmd({
 const run = Effect.fn("Cli.export.body")(function* (args: { sessionID?: string; sanitize?: boolean }) {
   const svc = yield* Session.Service
   let sessionID = args.sessionID ? SessionID.make(args.sessionID) : undefined
-  process.stderr.write(`Exporting session: ${sessionID ?? "latest"}\n`)
+  process.stderr.write(`Đang export session: ${sessionID ?? "mới nhất"}\n`)
 
   if (!sessionID) {
     UI.empty()
@@ -249,8 +249,8 @@ const run = Effect.fn("Cli.export.body")(function* (args: { sessionID?: string; 
     const sessions = yield* svc.list()
 
     if (sessions.length === 0) {
-      prompts.log.error("No sessions found", { output: process.stderr })
-      prompts.outro("Done", { output: process.stderr })
+      prompts.log.error("Không tìm thấy session nào", { output: process.stderr })
+      prompts.outro("Hoàn tất", { output: process.stderr })
       return
     }
 
@@ -258,7 +258,7 @@ const run = Effect.fn("Cli.export.body")(function* (args: { sessionID?: string; 
 
     const selectedSession = yield* Effect.promise(() =>
       prompts.autocomplete({
-        message: "Select session to export",
+        message: "Chọn session để export",
         maxItems: 10,
         options: sessions.map((session) => ({
           label: session.title,
@@ -275,7 +275,7 @@ const run = Effect.fn("Cli.export.body")(function* (args: { sessionID?: string; 
 
     sessionID = selectedSession
 
-    prompts.outro("Exporting session...", { output: process.stderr })
+    prompts.outro("Đang export session...", { output: process.stderr })
   }
 
   // Match legacy try/catch — catches both typed failures and defects
@@ -288,5 +288,5 @@ const run = Effect.fn("Cli.export.body")(function* (args: { sessionID?: string; 
 
     process.stdout.write(JSON.stringify(args.sanitize ? sanitize(exportData) : exportData, null, 2))
     process.stdout.write(EOL)
-  }).pipe(Effect.catchCause(() => fail(`Session not found: ${sessionID!}`)))
+  }).pipe(Effect.catchCause(() => fail(`Không tìm thấy session: ${sessionID!}`)))
 })

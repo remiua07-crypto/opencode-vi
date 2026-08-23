@@ -25,9 +25,9 @@ export function DialogWorkspaceUnavailable(props: { onRestore?: () => boolean | 
 
   useBindings(() => ({
     bindings: [
-      { key: "return", desc: "Confirm workspace option", group: "Dialog", cmd: () => void confirm() },
-      { key: "left", desc: "Cancel workspace restore", group: "Dialog", cmd: () => setStore("active", "cancel") },
-      { key: "right", desc: "Restore workspace", group: "Dialog", cmd: () => setStore("active", "restore") },
+      { key: "return", desc: "Xác nhận tùy chọn workspace", group: "Dialog", cmd: () => void confirm() },
+      { key: "left", desc: "Hủy khôi phục workspace", group: "Dialog", cmd: () => setStore("active", "cancel") },
+      { key: "right", desc: "Khôi phục workspace", group: "Dialog", cmd: () => setStore("active", "restore") },
     ],
   }))
 
@@ -35,17 +35,17 @@ export function DialogWorkspaceUnavailable(props: { onRestore?: () => boolean | 
     <box paddingLeft={2} paddingRight={2} gap={1}>
       <box flexDirection="row" justifyContent="space-between">
         <text attributes={TextAttributes.BOLD} fg={theme.text}>
-          Workspace Unavailable
+          Workspace không khả dụng
         </text>
         <text fg={theme.textMuted} onMouseUp={() => dialog.clear()}>
           esc
         </text>
       </box>
       <text fg={theme.textMuted} wrapMode="word">
-        This session is attached to a workspace that is no longer available.
+        Session này đang gắn với một workspace hiện không còn khả dụng.
       </text>
       <text fg={theme.textMuted} wrapMode="word">
-        Would you like to restore this session into a new workspace?
+        Bạn có muốn khôi phục session này vào một workspace mới không?
       </text>
       <box flexDirection="row" justifyContent="flex-end" paddingBottom={1} gap={1}>
         <For each={options}>

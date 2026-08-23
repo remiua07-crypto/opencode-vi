@@ -403,7 +403,7 @@ export function RunFooterView(props: RunFooterViewProps) {
   })
   const statusText = createMemo(() => {
     if (exiting()) {
-      return `Press ${clearShortcut() || "ctrl+c"} again to exit`
+      return `Nhấn ${clearShortcut() || "ctrl+c"} lần nữa để thoát`
     }
 
     if (busy()) {
@@ -414,7 +414,7 @@ export function RunFooterView(props: RunFooterViewProps) {
       return stateStatus()
     }
 
-    return shell() ? "Shell mode" : ""
+    return shell() ? "Chế độ shell" : ""
   })
   const activityMeta = createMemo(() => {
     if (!responsive().statusline.showActivityMeta || usage().length === 0) {
@@ -503,13 +503,13 @@ export function RunFooterView(props: RunFooterViewProps) {
     commands: [
       {
         name: "command.palette.show",
-        title: "Open command palette",
+        title: "Mở bảng lệnh",
         category: "Prompt",
         run: openCommand,
       },
       {
         name: "variant.cycle",
-        title: "Cycle model variant",
+        title: "Xoay vòng variant model",
         category: "Model",
         run: props.onCycle,
       },
@@ -527,7 +527,7 @@ export function RunFooterView(props: RunFooterViewProps) {
     commands: [
       {
         name: "session.background",
-        title: "Background subagents",
+        title: "Đưa subagent chạy nền",
         category: "Session",
         run: () => props.onBackground?.(),
       },
@@ -555,7 +555,7 @@ export function RunFooterView(props: RunFooterViewProps) {
     commands: [
       {
         name: "session.queued_prompts",
-        title: "Manage queued prompts",
+        title: "Quản lý prompt trong hàng đợi",
         category: "Session",
         run: openQueuedMenu,
       },

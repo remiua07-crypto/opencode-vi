@@ -291,7 +291,7 @@ export function Session() {
       const result = await sdk.client.session.get({ sessionID }, { throwOnError: true })
       if (!result.data) {
         toast.show({
-          message: `Session not found: ${sessionID}`,
+          message: `Không tìm thấy Session: ${sessionID}`,
           variant: "error",
           duration: 5000,
         })
@@ -436,7 +436,7 @@ export function Session() {
       sessionID,
     })
     const status = sync.data.session_status[sessionID]
-    if (status?.type === "retry") void DialogAlert.show(dialog, "Retry Error", status.message)
+    if (status?.type === "retry") void DialogAlert.show(dialog, "Lỗi thử lại", status.message)
   }
 
   function moveFirstChild() {
@@ -465,7 +465,7 @@ export function Session() {
 
   const sessionCommandList = createMemo(() => [
     {
-      title: session()?.share?.url ? "Copy share link" : "Share session",
+      title: session()?.share?.url ? "Copy link chia sẻ" : "Chia sẻ session",
       value: "session.share",
       suggested: route.type === "session",
       category: "Session",
@@ -477,8 +477,8 @@ export function Session() {
         const copy = (url: string) =>
           clipboard
             .write?.(url)
-            .then(() => toast.show({ message: "Share URL copied to clipboard!", variant: "success" }))
-            .catch(() => toast.show({ message: "Failed to copy URL to clipboard", variant: "error" }))
+            .then(() => toast.show({ message: "Đã copy URL chia sẻ vào clipboard!", variant: "success" }))
+            .catch(() => toast.show({ message: "Không thể copy URL vào clipboard", variant: "error" }))
         const url = session()?.share?.url
         if (url) {
           await copy(url)
@@ -486,7 +486,7 @@ export function Session() {
           return
         }
         if (!kv.get("share_consent", false)) {
-          const ok = await DialogConfirm.show(dialog, "Share Session", "Are you sure you want to share it?")
+          const ok = await DialogConfirm.show(dialog, "Chia sẻ Session", "Bạn có chắc muốn chia sẻ session này không?")
           if (ok !== true) return
           kv.set("share_consent", true)
         }
@@ -497,7 +497,7 @@ export function Session() {
           .then((res) => copy(res.data!.share!.url))
           .catch((error) => {
             toast.show({
-              message: error instanceof Error ? error.message : "Failed to share session",
+              message: error instanceof Error ? error.message : "Không thể chia sẻ session",
               variant: "error",
             })
           })
@@ -505,7 +505,7 @@ export function Session() {
       },
     },
     {
-      title: "Rename session",
+      title: "Đổi tên session",
       value: "session.rename",
       category: "Session",
       slash: {
@@ -516,7 +516,7 @@ export function Session() {
       },
     },
     {
-      title: "Jump to message",
+      title: "Nhảy đến tin nhắn",
       value: "session.timeline",
       category: "Session",
       slash: {
@@ -560,7 +560,7 @@ export function Session() {
       },
     },
     {
-      title: "Compact session",
+      title: "Nén gọn session",
       value: "session.compact",
       category: "Session",
       slash: {
@@ -572,7 +572,7 @@ export function Session() {
         if (!selectedModel) {
           toast.show({
             variant: "warning",
-            message: "Connect a provider to summarize this session",
+            message: "Kết nối một Provider để tóm tắt session này",
             duration: 3000,
           })
           return
@@ -586,7 +586,7 @@ export function Session() {
       },
     },
     {
-      title: "Unshare session",
+      title: "Ngừng chia sẻ session",
       value: "session.unshare",
       category: "Session",
       enabled: !!session()?.share?.url,
@@ -598,10 +598,10 @@ export function Session() {
           .unshare({
             sessionID: route.sessionID,
           })
-          .then(() => toast.show({ message: "Session unshared successfully", variant: "success" }))
+          .then(() => toast.show({ message: "Đã ngừng chia sẻ session", variant: "success" }))
           .catch((error) => {
             toast.show({
-              message: error instanceof Error ? error.message : "Failed to unshare session",
+              message: error instanceof Error ? error.message : "Không thể ngừng chia sẻ session",
               variant: "error",
             })
           })
@@ -609,7 +609,7 @@ export function Session() {
       },
     },
     {
-      title: "Undo previous message",
+      title: "Hoàn tác tin nhắn trước",
       value: "session.undo",
       category: "Session",
       slash: {
@@ -645,7 +645,7 @@ export function Session() {
       },
     },
     {
-      title: "Redo",
+      title: "Làm lại",
       value: "session.redo",
       category: "Session",
       enabled: !!session()?.revert?.messageID,
@@ -671,7 +671,7 @@ export function Session() {
       },
     },
     {
-      title: sidebarVisible() ? "Hide sidebar" : "Show sidebar",
+      title: sidebarVisible() ? "Ẩn sidebar" : "Hiện sidebar",
       value: "session.sidebar.toggle",
       category: "Session",
       run: () => {
@@ -684,7 +684,7 @@ export function Session() {
       },
     },
     {
-      title: conceal() ? "Disable code concealment" : "Enable code concealment",
+      title: conceal() ? "Tắt chế độ ẩn mã" : "Bật chế độ ẩn mã",
       value: "session.toggle.conceal",
       category: "Session",
       run: () => {
@@ -693,7 +693,7 @@ export function Session() {
       },
     },
     {
-      title: showTimestamps() ? "Hide timestamps" : "Show timestamps",
+      title: showTimestamps() ? "Ẩn mốc thời gian" : "Hiện mốc thời gian",
       value: "session.toggle.timestamps",
       category: "Session",
       slash: {
@@ -708,8 +708,8 @@ export function Session() {
     {
       title: (() => {
         const next = nextThinkingMode(thinkingMode())
-        if (next === "hide") return "Collapse thinking"
-        return "Expand thinking"
+        if (next === "hide") return "Thu gọn phần suy luận"
+        return "Mở rộng phần suy luận"
       })(),
       value: "session.toggle.thinking",
       category: "Session",
@@ -723,7 +723,7 @@ export function Session() {
       },
     },
     {
-      title: showDetails() ? "Hide tool details" : "Show tool details",
+      title: showDetails() ? "Ẩn chi tiết tool" : "Hiện chi tiết tool",
       value: "session.toggle.actions",
       category: "Session",
       run: () => {
@@ -732,7 +732,7 @@ export function Session() {
       },
     },
     {
-      title: "Toggle session scrollbar",
+      title: "Bật/tắt thanh cuộn session",
       value: "session.toggle.scrollbar",
       category: "Session",
       run: () => {
@@ -741,7 +741,7 @@ export function Session() {
       },
     },
     {
-      title: showGenericToolOutput() ? "Hide generic tool output" : "Show generic tool output",
+      title: showGenericToolOutput() ? "Ẩn kết quả tool khác" : "Hiện kết quả tool khác",
       value: "session.toggle.generic_tool_output",
       category: "Session",
       run: () => {
@@ -750,7 +750,7 @@ export function Session() {
       },
     },
     {
-      title: "Page up",
+      title: "Trang lên",
       value: "session.page.up",
       category: "Session",
       hidden: true,
@@ -760,7 +760,7 @@ export function Session() {
       },
     },
     {
-      title: "Page down",
+      title: "Trang xuống",
       value: "session.page.down",
       category: "Session",
       hidden: true,
@@ -770,7 +770,7 @@ export function Session() {
       },
     },
     {
-      title: "Line up",
+      title: "Dòng lên",
       value: "session.line.up",
       category: "Session",
       hidden: true,
@@ -780,7 +780,7 @@ export function Session() {
       },
     },
     {
-      title: "Line down",
+      title: "Dòng xuống",
       value: "session.line.down",
       category: "Session",
       hidden: true,
@@ -790,7 +790,7 @@ export function Session() {
       },
     },
     {
-      title: "Half page up",
+      title: "Nửa trang lên",
       value: "session.half.page.up",
       category: "Session",
       hidden: true,
@@ -800,7 +800,7 @@ export function Session() {
       },
     },
     {
-      title: "Half page down",
+      title: "Nửa trang xuống",
       value: "session.half.page.down",
       category: "Session",
       hidden: true,
@@ -810,7 +810,7 @@ export function Session() {
       },
     },
     {
-      title: "First message",
+      title: "Tin nhắn đầu tiên",
       value: "session.first",
       category: "Session",
       hidden: true,
@@ -820,7 +820,7 @@ export function Session() {
       },
     },
     {
-      title: "Last message",
+      title: "Tin nhắn cuối cùng",
       value: "session.last",
       category: "Session",
       hidden: true,
@@ -830,7 +830,7 @@ export function Session() {
       },
     },
     {
-      title: "Jump to last user message",
+      title: "Nhảy đến tin nhắn người dùng cuối",
       value: "session.messages_last_user",
       category: "Session",
       hidden: true,
@@ -861,27 +861,27 @@ export function Session() {
       },
     },
     {
-      title: "Next message",
+      title: "Tin nhắn tiếp theo",
       value: "session.message.next",
       category: "Session",
       hidden: true,
       run: () => scrollToMessage("next", dialog),
     },
     {
-      title: "Previous message",
+      title: "Tin nhắn trước đó",
       value: "session.message.previous",
       category: "Session",
       hidden: true,
       run: () => scrollToMessage("prev", dialog),
     },
     {
-      title: "Copy last assistant message",
+      title: "Copy tin nhắn assistant cuối",
       value: "messages.copy",
       category: "Session",
       run: () => {
         const lastAssistantMessage = messagesBeforeRevert().findLast((message) => message.role === "assistant")
         if (!lastAssistantMessage) {
-          toast.show({ message: "No assistant messages found", variant: "error" })
+          toast.show({ message: "Không có tin nhắn assistant nào", variant: "error" })
           dialog.clear()
           return
         }
@@ -889,7 +889,7 @@ export function Session() {
         const parts = sync.data.part[lastAssistantMessage.id] ?? []
         const textParts = parts.filter((part) => part.type === "text")
         if (textParts.length === 0) {
-          toast.show({ message: "No text parts found in last assistant message", variant: "error" })
+          toast.show({ message: "Không có phần văn bản trong tin nhắn assistant cuối", variant: "error" })
           dialog.clear()
           return
         }
@@ -900,7 +900,7 @@ export function Session() {
           .trim()
         if (!text) {
           toast.show({
-            message: "No text content found in last assistant message",
+            message: "Không có nội dung văn bản trong tin nhắn assistant cuối",
             variant: "error",
           })
           dialog.clear()
@@ -909,13 +909,13 @@ export function Session() {
 
         clipboard
           .write?.(text)
-          .then(() => toast.show({ message: "Message copied to clipboard!", variant: "success" }))
-          .catch(() => toast.show({ message: "Failed to copy to clipboard", variant: "error" }))
+          .then(() => toast.show({ message: "Đã copy tin nhắn vào clipboard!", variant: "success" }))
+          .catch(() => toast.show({ message: "Không thể copy vào clipboard", variant: "error" }))
         dialog.clear()
       },
     },
     {
-      title: "Copy session transcript",
+      title: "Copy nội dung session",
       value: "session.copy",
       category: "Session",
       slash: {
@@ -937,15 +937,15 @@ export function Session() {
             },
           )
           await clipboard.write?.(transcript)
-          toast.show({ message: "Session transcript copied to clipboard!", variant: "success" })
+          toast.show({ message: "Đã copy toàn bộ nội dung session vào clipboard!", variant: "success" })
         } catch {
-          toast.show({ message: "Failed to copy session transcript", variant: "error" })
+          toast.show({ message: "Không thể copy nội dung session", variant: "error" })
         }
         dialog.clear()
       },
     },
     {
-      title: "Export session transcript",
+      title: "Xuất nội dung session",
       value: "session.export",
       category: "Session",
       slash: {
@@ -1011,16 +1011,16 @@ export function Session() {
               await writeExport(filepath, result)
             }
 
-            toast.show({ message: `Session exported to ${filename}`, variant: "success" })
+            toast.show({ message: `Đã xuất session ra ${filename}`, variant: "success" })
           }
         } catch {
-          toast.show({ message: "Failed to export session", variant: "error" })
+          toast.show({ message: "Không thể xuất session", variant: "error" })
         }
         dialog.clear()
       },
     },
     {
-      title: "Background subagents",
+      title: "Subagent nền",
       value: "session.background",
       category: "Session",
       hidden: true,
@@ -1034,7 +1034,7 @@ export function Session() {
       },
     },
     {
-      title: "Go to child session",
+      title: "Đến session con",
       value: "session.child.first",
       category: "Session",
       hidden: true,
@@ -1044,7 +1044,7 @@ export function Session() {
       },
     },
     {
-      title: "Go to parent session",
+      title: "Về session cha",
       value: "session.parent",
       category: "Session",
       hidden: true,
@@ -1061,7 +1061,7 @@ export function Session() {
       }),
     },
     {
-      title: "Next child session",
+      title: "Session con tiếp theo",
       value: "session.child.next",
       category: "Session",
       hidden: true,
@@ -1072,7 +1072,7 @@ export function Session() {
       }),
     },
     {
-      title: "Previous child session",
+      title: "Session con trước đó",
       value: "session.child.previous",
       category: "Session",
       hidden: true,
@@ -1209,8 +1209,8 @@ export function Session() {
                           const handleUnrevert = async () => {
                             const confirmed = await DialogConfirm.show(
                               dialog,
-                              "Confirm Redo",
-                              "Are you sure you want to restore the reverted messages?",
+                              "Xác nhận làm lại",
+                              "Bạn có chắc muốn khôi phục các tin nhắn đã hoàn tác không?",
                             )
                             if (confirmed) {
                               keymap.dispatchCommand("session.redo")
@@ -1234,9 +1234,9 @@ export function Session() {
                                 paddingLeft={2}
                                 backgroundColor={hover() ? theme.backgroundElement : theme.backgroundPanel}
                               >
-                                <text fg={theme.textMuted}>{revert()!.reverted.length} message reverted</text>
+                                <text fg={theme.textMuted}>Đã hoàn tác {revert()!.reverted.length} tin nhắn</text>
                                 <text fg={theme.textMuted}>
-                                  <span style={{ fg: theme.text }}>{redoShortcut()}</span> or /redo to restore
+                                  <span style={{ fg: theme.text }}>{redoShortcut()}</span> hoặc /redo để khôi phục
                                 </text>
                                 <Show when={revert()!.diffFiles?.length}>
                                   <box marginTop={1}>
@@ -1426,7 +1426,7 @@ function UserMessage(props: {
                     return (
                       <text fg={theme.text}>
                         <span style={{ bg: theme.secondary, fg: theme.background }}>
-                          {directory ? " Directory " : " File "}
+                          {directory ? " Thư mục " : " Tệp "}
                         </span>
                         <span style={{ bg: theme.backgroundElement, fg: theme.textMuted }}> {file.filename} </span>
                       </text>
@@ -1448,7 +1448,7 @@ function UserMessage(props: {
               }
             >
               <text fg={theme.textMuted}>
-                <span style={{ bg: color(), fg: queuedFg(), bold: true }}> QUEUED </span>
+                <span style={{ bg: color(), fg: queuedFg(), bold: true }}> ĐANG CHỜ </span>
               </text>
             </Show>
           </box>
@@ -1458,7 +1458,7 @@ function UserMessage(props: {
         <box
           marginTop={1}
           border={["top"]}
-          title=" Compaction "
+          title=" Nén hội thoại "
           titleAlignment="center"
           borderColor={theme.borderActive}
         />
@@ -1511,7 +1511,7 @@ function AssistantMessage(props: { message: AssistantMessage; parts: Part[]; las
         <box paddingTop={1} paddingLeft={3}>
           <text fg={theme.text}>
             {childShortcut()}
-            <span style={{ fg: theme.textMuted }}> view subagents</span>
+            <span style={{ fg: theme.textMuted }}> xem subagents</span>
             <Show
               when={
                 sync.data.capabilities.experimentalBackgroundSubagents &&
@@ -1526,7 +1526,7 @@ function AssistantMessage(props: { message: AssistantMessage; parts: Part[]; las
             >
               <span style={{ fg: theme.textMuted }}> · </span>
               {backgroundShortcut()}
-              <span style={{ fg: theme.textMuted }}> background</span>
+              <span style={{ fg: theme.textMuted }}> nền</span>
             </Show>
           </text>
         </box>
@@ -1566,7 +1566,7 @@ function AssistantMessage(props: { message: AssistantMessage; parts: Part[]; las
                 <span style={{ fg: theme.textMuted }}> · {Locale.duration(duration())}</span>
               </Show>
               <Show when={props.message.error?.name === "MessageAbortedError"}>
-                <span style={{ fg: theme.textMuted }}> · interrupted</span>
+                <span style={{ fg: theme.textMuted }}> · đã ngắt</span>
               </Show>
             </text>
           </box>
@@ -1663,16 +1663,16 @@ function ReasoningHeader(props: {
       ? RGBA.fromValues(theme.warning.r, theme.warning.g, theme.warning.b, theme.thinkingOpacity)
       : theme.warning
   const completed = () => {
-    if (props.encrypted) return `Thought${props.duration ? ` · ${props.duration}` : ""}`
+    if (props.encrypted) return `Đã suy luận${props.duration ? ` · ${props.duration}` : ""}`
     const detail = [props.title, props.duration].filter(Boolean).join(" · ")
-    return `${props.toggleable ? (props.open ? "- " : "+ ") : ""}Thought${detail ? `: ${detail}` : ""}`
+    return `${props.toggleable ? (props.open ? "- " : "+ ") : ""}Đã suy luận${detail ? `: ${detail}` : ""}`
   }
 
   return (
     <Switch>
       <Match when={!props.done}>
         <box flexDirection="row">
-          <Spinner color={fg()}>{props.title ? "Thinking: " + props.title : "Thinking"}</Spinner>
+          <Spinner color={fg()}>{props.title ? "Đang suy luận: " + props.title : "Đang suy luận"}</Spinner>
         </box>
       </Match>
       <Match when={true}>
@@ -1813,7 +1813,7 @@ function GenericTool(props: ToolProps) {
     <Show
       when={props.output && ctx.showGenericToolOutput()}
       fallback={
-        <InlineTool icon="⚙" pending="Writing command..." complete={true} part={props.part}>
+        <InlineTool icon="⚙" pending="Đang viết lệnh..." complete={true} part={props.part}>
           {props.tool} {input(props.input)}
         </InlineTool>
       }
@@ -1826,7 +1826,7 @@ function GenericTool(props: ToolProps) {
         <box gap={1}>
           <text fg={theme.text}>{limited()}</text>
           <Show when={collapsed().overflow}>
-            <text fg={theme.textMuted}>{expanded() ? "Click to collapse" : "Click to expand"}</text>
+            <text fg={theme.textMuted}>{expanded() ? "Bấm để thu gọn" : "Bấm để mở rộng"}</text>
           </Show>
         </box>
       </BlockTool>
@@ -2070,7 +2070,7 @@ function Shell(props: ToolProps) {
   const title = createMemo(() => {
     const wd = workdirDisplay()
     if (!wd) return
-    return `# Running in ${wd}`
+    return `# Đang chạy trong ${wd}`
   })
 
   return (
@@ -2089,13 +2089,13 @@ function Shell(props: ToolProps) {
               <text fg={theme.text}>{limited()}</text>
             </Show>
             <Show when={collapsed().overflow}>
-              <text fg={theme.textMuted}>{expanded() ? "Click to collapse" : "Click to expand"}</text>
+              <text fg={theme.textMuted}>{expanded() ? "Bấm để thu gọn" : "Bấm để mở rộng"}</text>
             </Show>
           </box>
         </BlockTool>
       </Match>
       <Match when={true}>
-        <InlineTool icon="$" pending="Writing command..." complete={stringValue(props.input.command)} part={props.part}>
+        <InlineTool icon="$" pending="Đang viết lệnh..." complete={stringValue(props.input.command)} part={props.part}>
           {stringValue(props.input.command)}
         </InlineTool>
       </Match>
@@ -2113,7 +2113,7 @@ function Write(props: ToolProps) {
   return (
     <Switch>
       <Match when={props.metadata.diagnostics !== undefined}>
-        <BlockTool title={"# Wrote " + pathFormatter.format(stringValue(props.input.filePath))} part={props.part}>
+        <BlockTool title={"# Đã ghi " + pathFormatter.format(stringValue(props.input.filePath))} part={props.part}>
           <line_number fg={theme.textMuted} minWidth={3} paddingRight={1}>
             <code
               conceal={false}
@@ -2129,11 +2129,11 @@ function Write(props: ToolProps) {
       <Match when={true}>
         <InlineTool
           icon="←"
-          pending="Preparing write..."
+          pending="Đang chuẩn bị ghi..."
           complete={stringValue(props.input.filePath)}
           part={props.part}
         >
-          Write {pathFormatter.format(stringValue(props.input.filePath))}
+          Ghi file {pathFormatter.format(stringValue(props.input.filePath))}
         </InlineTool>
       </Match>
     </Switch>
@@ -2143,12 +2143,10 @@ function Write(props: ToolProps) {
 function Glob(props: ToolProps) {
   const pathFormatter = usePathFormatter()
   return (
-    <InlineTool icon="✱" pending="Finding files..." complete={stringValue(props.input.pattern)} part={props.part}>
+    <InlineTool icon="✱" pending="Đang tìm file..." complete={stringValue(props.input.pattern)} part={props.part}>
       Glob "{stringValue(props.input.pattern)}"{" "}
-      <Show when={stringValue(props.input.path)}>in {pathFormatter.format(stringValue(props.input.path))} </Show>
-      <Show when={numberValue(props.metadata.count)}>
-        ({numberValue(props.metadata.count)} {numberValue(props.metadata.count) === 1 ? "match" : "matches"})
-      </Show>
+      <Show when={stringValue(props.input.path)}>trong {pathFormatter.format(stringValue(props.input.path))} </Show>
+      <Show when={numberValue(props.metadata.count)}>({numberValue(props.metadata.count)} kết quả)</Show>
     </InlineTool>
   )
 }
@@ -2168,18 +2166,18 @@ function Read(props: ToolProps) {
     <>
       <InlineTool
         icon="→"
-        pending="Reading file..."
+        pending="Đang đọc file..."
         complete={stringValue(props.input.filePath)}
         spinner={isRunning()}
         part={props.part}
       >
-        Read {pathFormatter.format(stringValue(props.input.filePath))} {input(props.input, ["filePath"])}
+        Đọc {pathFormatter.format(stringValue(props.input.filePath))} {input(props.input, ["filePath"])}
       </InlineTool>
       <For each={loaded()}>
         {(filepath) => (
           <box paddingLeft={3}>
             <text paddingLeft={3} fg={theme.textMuted}>
-              ↳ Loaded {pathFormatter.format(filepath)}
+              ↳ Đã tải {pathFormatter.format(filepath)}
             </text>
           </box>
         )}
@@ -2191,19 +2189,17 @@ function Read(props: ToolProps) {
 function Grep(props: ToolProps) {
   const pathFormatter = usePathFormatter()
   return (
-    <InlineTool icon="✱" pending="Searching content..." complete={stringValue(props.input.pattern)} part={props.part}>
+    <InlineTool icon="✱" pending="Đang tìm nội dung..." complete={stringValue(props.input.pattern)} part={props.part}>
       Grep "{stringValue(props.input.pattern)}"{" "}
-      <Show when={stringValue(props.input.path)}>in {pathFormatter.format(stringValue(props.input.path))} </Show>
-      <Show when={numberValue(props.metadata.matches)}>
-        ({numberValue(props.metadata.matches)} {numberValue(props.metadata.matches) === 1 ? "match" : "matches"})
-      </Show>
+      <Show when={stringValue(props.input.path)}>trong {pathFormatter.format(stringValue(props.input.path))} </Show>
+      <Show when={numberValue(props.metadata.matches)}>({numberValue(props.metadata.matches)} kết quả)</Show>
     </InlineTool>
   )
 }
 
 function WebFetch(props: ToolProps) {
   return (
-    <InlineTool icon="%" pending="Fetching from the web..." complete={stringValue(props.input.url)} part={props.part}>
+    <InlineTool icon="%" pending="Đang tải từ web..." complete={stringValue(props.input.url)} part={props.part}>
       WebFetch {stringValue(props.input.url)}
     </InlineTool>
   )
@@ -2211,9 +2207,9 @@ function WebFetch(props: ToolProps) {
 
 function WebSearch(props: ToolProps) {
   return (
-    <InlineTool icon="◈" pending="Searching web..." complete={stringValue(props.input.query)} part={props.part}>
+    <InlineTool icon="◈" pending="Đang tìm trên web..." complete={stringValue(props.input.query)} part={props.part}>
       {webSearchProviderLabel(props.metadata.provider)} "{stringValue(props.input.query)}"{" "}
-      <Show when={numberValue(props.metadata.numResults)}>({numberValue(props.metadata.numResults)} results)</Show>
+      <Show when={numberValue(props.metadata.numResults)}>({numberValue(props.metadata.numResults)} kết quả)</Show>
     </InlineTool>
   )
 }
@@ -2270,7 +2266,7 @@ function Task(props: ToolProps) {
     if (!description) return ""
     let content = [
       formatSubagentTitle(
-        Locale.titlecase(stringValue(props.input.subagent_type) ?? "General"),
+        Locale.titlecase(stringValue(props.input.subagent_type) ?? "Chung"),
         description,
         props.metadata.background === true,
       ),
@@ -2301,7 +2297,7 @@ function Task(props: ToolProps) {
       color={retry() ? theme.error : undefined}
       spinner={isRunning()}
       complete={stringValue(props.input.description)}
-      pending="Delegating..."
+      pending="Đang giao việc..."
       part={props.part}
       onClick={() => {
         if (sessionID()) {
@@ -2360,7 +2356,7 @@ function Execute(props: ToolProps) {
     const lines = ["execute"]
     for (const call of calls()) {
       const args = input(call.input ?? {})
-      lines.push(`↳ ${call.tool}${args ? ` ${args}` : ""}${call.status === "error" ? " (failed)" : ""}`)
+      lines.push(`↳ ${call.tool}${args ? ` ${args}` : ""}${call.status === "error" ? " (thất bại)" : ""}`)
     }
     return lines.join("\n")
   })
@@ -2412,7 +2408,7 @@ function Edit(props: ToolProps) {
   return (
     <Switch>
       <Match when={stringValue(props.metadata.diff) !== undefined}>
-        <BlockTool title={"← Edit " + pathFormatter.format(stringValue(props.input.filePath))} part={props.part}>
+        <BlockTool title={"← Sửa " + pathFormatter.format(stringValue(props.input.filePath))} part={props.part}>
           <box paddingLeft={1}>
             <diff
               diff={diffContent()}
@@ -2438,8 +2434,8 @@ function Edit(props: ToolProps) {
         </BlockTool>
       </Match>
       <Match when={true}>
-        <InlineTool icon="←" pending="Preparing edit..." complete={stringValue(props.input.filePath)} part={props.part}>
-          Edit {pathFormatter.format(stringValue(props.input.filePath))} {input({ replaceAll: props.input.replaceAll })}
+        <InlineTool icon="←" pending="Đang chuẩn bị chỉnh sửa..." complete={stringValue(props.input.filePath)} part={props.part}>
+          Sửa {pathFormatter.format(stringValue(props.input.filePath))} {input({ replaceAll: props.input.replaceAll })}
         </InlineTool>
       </Match>
     </Switch>
@@ -2486,10 +2482,10 @@ function ApplyPatch(props: ToolProps) {
   }
 
   function title(file: { type: string; relativePath: string; filePath: string; deletions: number }) {
-    if (file.type === "delete") return "# Deleted " + file.relativePath
-    if (file.type === "add") return "# Created " + file.relativePath
-    if (file.type === "move") return "# Moved " + pathFormatter.format(file.filePath) + " → " + file.relativePath
-    return "← Patched " + file.relativePath
+    if (file.type === "delete") return "# Đã xóa " + file.relativePath
+    if (file.type === "add") return "# Đã tạo " + file.relativePath
+    if (file.type === "move") return "# Đã chuyển " + pathFormatter.format(file.filePath) + " → " + file.relativePath
+    return "← Đã vá " + file.relativePath
   }
 
   return (
@@ -2501,9 +2497,7 @@ function ApplyPatch(props: ToolProps) {
               <Show
                 when={file.type !== "delete"}
                 fallback={
-                  <text fg={theme.diffRemoved}>
-                    -{file.deletions} line{file.deletions !== 1 ? "s" : ""}
-                  </text>
+                  <text fg={theme.diffRemoved}>-{file.deletions} dòng</text>
                 }
               >
                 <Diff diff={file.patch} filePath={file.filePath} />
@@ -2514,7 +2508,7 @@ function ApplyPatch(props: ToolProps) {
         </For>
       </Match>
       <Match when={true}>
-        <InlineTool icon="%" pending="Preparing patch..." failure="Patch failed" complete={false} part={props.part}>
+        <InlineTool icon="%" pending="Đang chuẩn bị patch..." failure="Patch thất bại" complete={false} part={props.part}>
           Patch
         </InlineTool>
       </Match>
@@ -2527,7 +2521,7 @@ function TodoWrite(props: ToolProps) {
   return (
     <Switch>
       <Match when={parseTodos(props.metadata.todos).length}>
-        <BlockTool title="# Todos" part={props.part}>
+        <BlockTool title="# Việc cần làm" part={props.part}>
           <box>
             <For each={todos()}>{(todo) => <TodoItem status={todo.status} content={todo.content} />}</For>
           </box>
@@ -2536,12 +2530,12 @@ function TodoWrite(props: ToolProps) {
       <Match when={true}>
         <InlineTool
           icon="⚙"
-          pending="Updating todos..."
-          failure="Todo update failed"
+          pending="Đang cập nhật việc cần làm..."
+          failure="Cập nhật việc cần làm thất bại"
           complete={false}
           part={props.part}
         >
-          Updating todos...
+          Đang cập nhật việc cần làm...
         </InlineTool>
       </Match>
     </Switch>
@@ -2555,14 +2549,14 @@ function Question(props: ToolProps) {
   const count = createMemo(() => questions().length)
 
   function format(answer?: ReadonlyArray<string>) {
-    if (!answer?.length) return "(no answer)"
+    if (!answer?.length) return "(không có câu trả lời)"
     return answer.join(", ")
   }
 
   return (
     <Switch>
       <Match when={answers()}>
-        <BlockTool title="# Questions" part={props.part}>
+        <BlockTool title="# Câu hỏi" part={props.part}>
           <box gap={1}>
             <For each={questions()}>
               {(q, i) => (
@@ -2576,8 +2570,8 @@ function Question(props: ToolProps) {
         </BlockTool>
       </Match>
       <Match when={true}>
-        <InlineTool icon="→" pending="Asking questions..." complete={count()} part={props.part}>
-          Asked {count()} question{count() !== 1 ? "s" : ""}
+        <InlineTool icon="→" pending="Đang đặt câu hỏi..." complete={count()} part={props.part}>
+          Đã hỏi {count()} câu hỏi
         </InlineTool>
       </Match>
     </Switch>
@@ -2586,7 +2580,7 @@ function Question(props: ToolProps) {
 
 function Skill(props: ToolProps) {
   return (
-    <InlineTool icon="→" pending="Loading skill..." complete={stringValue(props.input.name)} part={props.part}>
+    <InlineTool icon="→" pending="Đang tải skill..." complete={stringValue(props.input.name)} part={props.part}>
       Skill "{stringValue(props.input.name)}"
     </InlineTool>
   )
@@ -2609,7 +2603,7 @@ function Diagnostics(props: { diagnostics: unknown; filePath: string }) {
         <For each={errors()}>
           {(diagnostic) => (
             <text fg={theme.error}>
-              Error [{diagnostic.range.start.line + 1}:{diagnostic.range.start.character + 1}] {diagnostic.message}
+              Lỗi [{diagnostic.range.start.line + 1}:{diagnostic.range.start.character + 1}] {diagnostic.message}
             </text>
           )}
         </For>

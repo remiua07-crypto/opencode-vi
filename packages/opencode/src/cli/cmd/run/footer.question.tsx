@@ -453,8 +453,8 @@ export function RunQuestionBody(props: {
                             fg={other() ? props.theme.highlight : picked() ? props.theme.success : props.theme.text}
                           >
                             {info()?.multiple
-                              ? `[${picked() ? "✓" : " "}] Type your own answer`
-                              : "Type your own answer"}
+                              ? `[${picked() ? "✓" : " "}] Tự nhập câu trả lời`
+                              : "Tự nhập câu trả lời"}
                           </text>
                         </box>
                         <Show when={!info()?.multiple}>
@@ -479,7 +479,7 @@ export function RunQuestionBody(props: {
                             minHeight={1}
                             maxHeight={4}
                             wrapMode="word"
-                            placeholder="Type your own answer"
+                            placeholder="Tự nhập câu trả lời"
                             placeholderColor={props.theme.muted}
                             textColor={props.theme.text}
                             focusedTextColor={props.theme.text}

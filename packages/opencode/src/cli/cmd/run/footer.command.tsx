@@ -97,11 +97,11 @@ function countLabel(count: number, total: number, query: string) {
 }
 
 function categoryRank(category: string) {
-  if (category === "Project Commands") {
+  if (category === "Lệnh project") {
     return 0
   }
 
-  if (category === "MCP Commands") {
+  if (category === "Lệnh MCP") {
     return 1
   }
 
@@ -371,7 +371,7 @@ export function RunCommandMenuBody(props: {
               category: "Session",
               display: "View subagents",
               footer:
-                activeSubagentCount() > 0 ? `${activeSubagentCount()} active` : `${props.subagents().length} recent`,
+                activeSubagentCount() > 0 ? `${activeSubagentCount()} đang chạy` : `${props.subagents().length} recent`,
               keywords: props
                 .subagents()
                 .map((item) => `${item.label} ${item.description} ${item.title ?? ""}`)
@@ -383,7 +383,7 @@ export function RunCommandMenuBody(props: {
         action: "slash",
         category: "Session",
         name: "new",
-        display: "New session",
+        display: "Session mới",
         footer: "/new",
         keywords: "new session clear",
       },
@@ -413,7 +413,7 @@ export function RunCommandMenuBody(props: {
             {
               action: "queued" as const,
               category: "Agent",
-              display: "Manage queued prompts",
+              display: "Quản lý prompt trong hàng đợi",
               footer: `${props.queued().length} queued`,
               keywords: props
                 .queued()
@@ -425,7 +425,7 @@ export function RunCommandMenuBody(props: {
       {
         action: "variant.cycle",
         category: "Agent",
-        display: "Variant cycle",
+        display: "Xoay vòng variant",
         footer: props.variantCycle,
         keywords: "variant cycle",
       },
@@ -434,7 +434,7 @@ export function RunCommandMenuBody(props: {
             {
               action: "variant.list" as const,
               category: "Agent",
-              display: "Switch model variant",
+              display: "Chuyển variant model",
               keywords: `variant variants ${props.variants().join(" ")}`,
             },
           ]
@@ -446,7 +446,7 @@ export function RunCommandMenuBody(props: {
         (item) =>
           ({
             action: "slash",
-            category: item.source === "mcp" ? "MCP Commands" : "Project Commands",
+            category: item.source === "mcp" ? "Lệnh MCP" : "Lệnh project",
             name: item.name,
             display: item.name,
             footer: `/${item.name}`,
@@ -561,7 +561,7 @@ export function RunCommandMenuBody(props: {
         offset={menu.offset}
         rows={() => PANEL_LIST_ROWS}
         limit={PANEL_LIST_ROWS}
-        empty="No results found"
+        empty="Không tìm thấy kết quả"
         border={false}
         paddingLeft={PANEL_PAD}
         paddingRight={PANEL_PAD}
@@ -664,7 +664,7 @@ export function RunSubagentSelectBody(props: {
         offset={menu.offset}
         rows={menu.rows}
         limit={SUBAGENT_LIST_ROWS}
-        empty="No subagents found"
+        empty="Không tìm thấy subagent nào"
         border={false}
         paddingLeft={PANEL_PAD}
         paddingRight={PANEL_PAD}
@@ -689,7 +689,7 @@ export function RunQueuedPromptSelectBody(props: {
     props.prompts().map((prompt) => ({
       category: "",
       display: prompt.prompt.text.replaceAll("\n", " "),
-      footer: "queued · ctrl+e edit · ctrl+d remove",
+      footer: "queued · ctrl+e sửa · ctrl+d xóa",
       keywords: prompt.prompt.text,
       prompt,
     })),
@@ -761,7 +761,7 @@ export function RunQueuedPromptSelectBody(props: {
         offset={menu.offset}
         rows={menu.rows}
         limit={SUBAGENT_LIST_ROWS}
-        empty="No queued prompts"
+        empty="Không có prompt trong hàng đợi"
         border={false}
         paddingLeft={PANEL_PAD}
         paddingRight={PANEL_PAD}
@@ -838,7 +838,7 @@ export function RunSkillSelectBody(props: {
         offset={menu.offset}
         rows={() => PANEL_LIST_ROWS}
         limit={PANEL_LIST_ROWS}
-        empty={props.commands() ? "No skills found" : "Skills loading"}
+        empty={props.commands() ? "Không tìm thấy skill nào" : "Đang tải Skills"}
         border={false}
         paddingLeft={PANEL_PAD}
         paddingRight={PANEL_PAD}
@@ -936,7 +936,7 @@ export function RunVariantSelectBody(props: {
         offset={menu.offset}
         rows={() => PANEL_LIST_ROWS}
         limit={PANEL_LIST_ROWS}
-        empty="No results found"
+        empty="Không tìm thấy kết quả"
         border={false}
         paddingLeft={PANEL_PAD}
         paddingRight={PANEL_PAD}
@@ -1057,7 +1057,7 @@ export function RunModelSelectBody(props: {
         offset={menu.offset}
         rows={() => PANEL_LIST_ROWS}
         limit={PANEL_LIST_ROWS}
-        empty={props.providers() ? "No results found" : "Models loading"}
+        empty={props.providers() ? "Không tìm thấy kết quả" : "Đang tải Models"}
         border={false}
         paddingLeft={PANEL_PAD}
         paddingRight={PANEL_PAD}

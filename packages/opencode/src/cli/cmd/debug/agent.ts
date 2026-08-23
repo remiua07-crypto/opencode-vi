@@ -3,7 +3,7 @@ import { effectCmd } from "../../effect-cmd"
 
 export const AgentCommand = effectCmd({
   command: "agent <name>",
-  describe: "show agent configuration details",
+  describe: "hiển thị chi tiết cấu hình agent",
   builder: (yargs) =>
     yargs
       .positional("name", {

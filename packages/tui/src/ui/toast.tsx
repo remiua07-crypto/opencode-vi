@@ -74,7 +74,7 @@ function init() {
         })
       toast.show({
         variant: "error",
-        message: "An unknown error has occurred",
+        message: "Đã xảy ra lỗi không xác định",
       })
     },
     get currentToast(): ToastOptions | null {

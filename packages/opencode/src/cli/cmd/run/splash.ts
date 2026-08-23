@@ -22,7 +22,7 @@ import { go } from "@/cli/logo"
 import type { RunSplashTheme } from "./theme"
 
 export const SPLASH_TITLE_LIMIT = 50
-export const SPLASH_TITLE_FALLBACK = "Untitled session"
+export const SPLASH_TITLE_FALLBACK = "Session chưa có tiêu đề"
 
 type SplashInput = {
   title: string | undefined
@@ -213,7 +213,7 @@ function build(input: SplashWriterInput, kind: "entry" | "exit", ctx: Scrollback
     const top = 1
     const body_left = (mark[0]?.length ?? 0) + 2
     const session = "Session  "
-    const label = "Continue "
+    const label = "Tiếp tục "
 
     for (let i = 0; i < mark.length; i += 1) {
       draw(lines, mark[i] ?? "", {

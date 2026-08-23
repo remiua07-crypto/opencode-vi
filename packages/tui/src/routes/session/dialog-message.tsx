@@ -20,12 +20,12 @@ export function DialogMessage(props: {
 
   return (
     <DialogSelect
-      title="Message Actions"
+      title="Thao tác tin nhắn"
       options={[
         {
-          title: "Revert",
+          title: "Hoàn tác",
           value: "session.revert",
-          description: "undo messages and file changes",
+          description: "hoàn tác tin nhắn và thay đổi file",
           onSelect: (dialog) => {
             const msg = message()
             if (!msg) return
@@ -54,9 +54,9 @@ export function DialogMessage(props: {
           },
         },
         {
-          title: "Copy",
+          title: "Sao chép",
           value: "message.copy",
-          description: "message text to clipboard",
+          description: "copy nội dung tin nhắn vào clipboard",
           onSelect: async (dialog) => {
             const msg = message()
             if (!msg) return
@@ -76,7 +76,7 @@ export function DialogMessage(props: {
         {
           title: "Fork",
           value: "session.fork",
-          description: "create a new session",
+          description: "tạo session mới",
           onSelect: async (dialog) => {
             const result = await sdk.client.session.fork({
               sessionID: props.sessionID,

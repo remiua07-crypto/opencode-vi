@@ -8,10 +8,10 @@ import { ACPProfile } from "@/acp/profile"
 
 export const AcpCommand = effectCmd({
   command: "acp",
-  describe: "start ACP (Agent Client Protocol) server",
+  describe: "khởi động máy chủ ACP (Agent Client Protocol)",
   builder: (yargs) => {
     return withNetworkOptions(yargs).option("cwd", {
-      describe: "working directory",
+      describe: "thư mục làm việc",
       type: "string",
       default: process.cwd(),
     })

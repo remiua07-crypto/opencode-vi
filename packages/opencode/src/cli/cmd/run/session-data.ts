@@ -179,7 +179,7 @@ export function formatError(error: {
     return error.name
   }
 
-  return "unknown error"
+  return "lỗi không xác định"
 }
 
 function isAbort(error: { name?: string } | undefined): boolean {
@@ -396,7 +396,7 @@ function syncQuestion(data: SessionData, part: ToolPart): FooterOutput | undefin
 
 function toolStatus(part: ToolPart): string {
   if (part.tool !== "task") {
-    return `running ${part.tool}`
+    return `đang chạy ${part.tool}`
   }
 
   const state = part.state as {
@@ -407,15 +407,15 @@ function toolStatus(part: ToolPart): string {
   }
   const desc = state.input?.description
   if (typeof desc === "string" && desc.trim()) {
-    return `running ${desc.trim()}`
+    return `đang chạy ${desc.trim()}`
   }
 
   const type = state.input?.subagent_type
   if (typeof type === "string" && type.trim()) {
-    return `running ${type.trim()}`
+    return `đang chạy ${type.trim()}`
   }
 
-  return "running task"
+  return "đang chạy task"
 }
 
 // Returns true if we can flush this part's text to scrollback.
@@ -694,7 +694,7 @@ function startShell(callID: string, command: string): SessionCommit {
       command,
     },
     {
-      text: "running shell",
+      text: "đang chạy shell",
       phase: "start",
       toolState: "running",
     },
@@ -787,12 +787,12 @@ export function reduceSessionData(input: SessionDataInput): SessionDataOutput {
 
     const partID = shellPartID(event.properties.callID)
     if (data.ids.has(partID) || data.tools.has(partID)) {
-      return out(data, commits, patch({ status: "running shell" }))
+      return out(data, commits, patch({ status: "đang chạy shell" }))
     }
 
     data.tools.add(partID)
     commits.push(startShell(event.properties.callID, shell.command ?? event.properties.command))
-    return out(data, commits, patch({ status: "running shell" }))
+    return out(data, commits, patch({ status: "đang chạy shell" }))
   }
 
   if (event.type === "session.next.shell.ended") {
@@ -840,7 +840,7 @@ export function reduceSessionData(input: SessionDataInput): SessionDataOutput {
     let next: FooterPatch | undefined
     if (!data.announced) {
       data.announced = true
-      next = { status: "assistant responding" }
+      next = { status: "assistant đang phản hồi" }
     }
 
     const usage = formatUsage(
@@ -992,7 +992,7 @@ export function reduceSessionData(input: SessionDataInput): SessionDataOutput {
 
         data.ids.add(part.id)
         const text =
-          typeof part.state.error === "string" && part.state.error.trim() ? part.state.error : "unknown error"
+          typeof part.state.error === "string" && part.state.error.trim() ? part.state.error : "lỗi không xác định"
         commits.push(failTool(part, text))
         return out(data, commits, view)
       }

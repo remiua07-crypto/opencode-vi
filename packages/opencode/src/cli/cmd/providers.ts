@@ -46,7 +46,7 @@ const handlePluginAuth = Effect.fn("Cli.providers.pluginAuth")(function* (
       if (plugin.auth.methods.length <= 1) return 0
       return yield* promptValue(
         yield* Prompt.select({
-          message: "Login method",
+          message: "Phương thức đăng nhập",
           options: plugin.auth.methods.map((x, index) => ({
             label: x.label,
             value: index,
@@ -57,7 +57,7 @@ const handlePluginAuth = Effect.fn("Cli.providers.pluginAuth")(function* (
     const match = plugin.auth.methods.findIndex((x) => x.label.toLowerCase() === methodName.toLowerCase())
     if (match === -1) {
       return yield* fail(
-        `Unknown method "${methodName}" for ${provider}. Available: ${plugin.auth.methods.map((x) => x.label).join(", ")}`,
+        `Không rõ phương thức "${methodName}" cho ${provider}. Khả dụng: ${plugin.auth.methods.map((x) => x.label).join(", ")}`,
       )
     }
     return match
@@ -93,10 +93,10 @@ const handlePluginAuth = Effect.fn("Cli.providers.pluginAuth")(function* (
   }
 
   if (method.type === "oauth") {
-    const authorize = yield* cliTry("Failed to authorize: ", () => method.authorize(inputs))
+    const authorize = yield* cliTry("Ủy quyền thất bại: ", () => method.authorize(inputs))
 
     if (authorize.url) {
-      yield* Prompt.log.info("Go to: " + authorize.url)
+      yield* Prompt.log.info("Truy cập: " + authorize.url)
     }
 
     if (authorize.method === "auto") {
@@ -104,10 +104,10 @@ const handlePluginAuth = Effect.fn("Cli.providers.pluginAuth")(function* (
         yield* Prompt.log.info(authorize.instructions)
       }
       const spinner = Prompt.spinner()
-      yield* spinner.start("Waiting for authorization...")
-      const result = yield* cliTry("Failed to authorize: ", () => authorize.callback())
+      yield* spinner.start("Đang chờ ủy quyền...")
+      const result = yield* cliTry("Ủy quyền thất bại: ", () => authorize.callback())
       if (result.type === "failed") {
-        yield* spinner.stop("Failed to authorize", 1)
+        yield* spinner.stop("Ủy quyền thất bại", 1)
       }
       if (result.type === "success") {
         const saveProvider = result.provider ?? provider
@@ -128,19 +128,19 @@ const handlePluginAuth = Effect.fn("Cli.providers.pluginAuth")(function* (
             ...(result.metadata ? { metadata: result.metadata } : {}),
           })
         }
-        yield* spinner.stop("Login successful")
+        yield* spinner.stop("Đăng nhập thành công")
       }
     }
 
     if (authorize.method === "code") {
       const code = yield* Prompt.text({
-        message: "Paste the authorization code here: ",
-        validate: (x) => (x && x.length > 0 ? undefined : "Required"),
+        message: "Dán mã ủy quyền vào đây: ",
+        validate: (x) => (x && x.length > 0 ? undefined : "Bắt buộc"),
       })
       const authorizationCode = yield* promptValue(code)
-      const result = yield* cliTry("Failed to authorize: ", () => authorize.callback(authorizationCode))
+      const result = yield* cliTry("Ủy quyền thất bại: ", () => authorize.callback(authorizationCode))
       if (result.type === "failed") {
-        yield* Prompt.log.error("Failed to authorize")
+        yield* Prompt.log.error("Ủy quyền thất bại")
       }
       if (result.type === "success") {
         const saveProvider = result.provider ?? provider
@@ -161,18 +161,18 @@ const handlePluginAuth = Effect.fn("Cli.providers.pluginAuth")(function* (
             ...(result.metadata ? { metadata: result.metadata } : {}),
           })
         }
-        yield* Prompt.log.success("Login successful")
+        yield* Prompt.log.success("Đăng nhập thành công")
       }
     }
 
-    yield* Prompt.outro("Done")
+    yield* Prompt.outro("Hoàn tất")
     return true
   }
 
   if (method.type === "api") {
     const key = yield* Prompt.password({
-      message: "Enter your API key",
-      validate: (x) => (x && x.length > 0 ? undefined : "Required"),
+      message: "Nhập API key của bạn",
+      validate: (x) => (x && x.length > 0 ? undefined : "Bắt buộc"),
     })
     const apiKey = yield* promptValue(key)
 
@@ -184,13 +184,13 @@ const handlePluginAuth = Effect.fn("Cli.providers.pluginAuth")(function* (
         key: apiKey,
         ...metadata,
       })
-      yield* Prompt.outro("Done")
+      yield* Prompt.outro("Hoàn tất")
       return true
     }
 
-    const result = yield* cliTry("Failed to authorize: ", () => authorizeApi(inputs))
+    const result = yield* cliTry("Ủy quyền thất bại: ", () => authorizeApi(inputs))
     if (result.type === "failed") {
-      yield* Prompt.log.error("Failed to authorize")
+      yield* Prompt.log.error("Ủy quyền thất bại")
     }
     if (result.type === "success") {
       const saveProvider = result.provider ?? provider
@@ -200,9 +200,9 @@ const handlePluginAuth = Effect.fn("Cli.providers.pluginAuth")(function* (
         key: result.key ?? apiKey,
         ...(Object.keys(merged).length ? { metadata: merged } : {}),
       })
-      yield* Prompt.log.success("Login successful")
+      yield* Prompt.log.success("Đăng nhập thành công")
     }
-    yield* Prompt.outro("Done")
+    yield* Prompt.outro("Hoàn tất")
     return true
   }
 
@@ -239,7 +239,7 @@ export function resolvePluginProviders(input: {
 export const ProvidersCommand = cmd({
   command: "providers",
   aliases: ["auth"],
-  describe: "manage AI providers and credentials",
+  describe: "quản lý provider AI và thông tin xác thực",
   builder: (yargs) =>
     yargs.command(ProvidersListCommand).command(ProvidersLoginCommand).command(ProvidersLogoutCommand).demandCommand(),
   async handler() {},
@@ -248,7 +248,7 @@ export const ProvidersCommand = cmd({
 export const ProvidersListCommand = effectCmd({
   command: "list",
   aliases: ["ls"],
-  describe: "list providers and credentials",
+  describe: "liệt kê provider và thông tin xác thực",
   // Lists global credentials + provider env vars; no project instance needed.
   instance: false,
   handler: Effect.fn("Cli.providers.list")(function* (_args) {
@@ -259,7 +259,7 @@ export const ProvidersListCommand = effectCmd({
     const authPath = path.join(Global.Path.data, "auth.json")
     const homedir = os.homedir()
     const displayPath = authPath.startsWith(homedir) ? authPath.replace(homedir, "~") : authPath
-    yield* Prompt.intro(`Credentials ${UI.Style.TEXT_DIM}${displayPath}`)
+    yield* Prompt.intro(`Thông tin xác thực ${UI.Style.TEXT_DIM}${displayPath}`)
     const results = Object.entries(yield* Effect.orDie(authSvc.all()))
     const database = yield* modelsDev.get()
 
@@ -268,7 +268,7 @@ export const ProvidersListCommand = effectCmd({
       yield* Prompt.log.info(`${name} ${UI.Style.TEXT_DIM}${result.type}`)
     }
 
-    yield* Prompt.outro(`${results.length} credentials`)
+    yield* Prompt.outro(`${results.length} thông tin xác thực`)
 
     const activeEnvVars: Array<{ provider: string; envVar: string }> = []
 
@@ -285,69 +285,69 @@ export const ProvidersListCommand = effectCmd({
 
     if (activeEnvVars.length > 0) {
       UI.empty()
-      yield* Prompt.intro("Environment")
+      yield* Prompt.intro("Môi trường")
 
       for (const { provider, envVar } of activeEnvVars) {
         yield* Prompt.log.info(`${provider} ${UI.Style.TEXT_DIM}${envVar}`)
       }
 
-      yield* Prompt.outro(`${activeEnvVars.length} environment variable` + (activeEnvVars.length === 1 ? "" : "s"))
+      yield* Prompt.outro(`${activeEnvVars.length} biến môi trường`)
     }
   }),
 })
 
 export const ProvidersLoginCommand = effectCmd({
   command: "login [url]",
-  describe: "log in to a provider",
+  describe: "đăng nhập vào một provider",
   // URL login skips instance bootstrap, which would load remote config with the stale token and crash before re-auth.
   instance: (args) => !args.url,
   builder: (yargs: Argv) =>
     yargs
       .positional("url", {
-        describe: "opencode auth provider",
+        describe: "provider xác thực opencode",
         type: "string",
       })
       .option("provider", {
         alias: ["p"],
-        describe: "provider id or name to log in to (skips provider selection)",
+        describe: "id hoặc tên provider cần đăng nhập (bỏ qua bước chọn provider)",
         type: "string",
       })
       .option("method", {
         alias: ["m"],
-        describe: "login method label (skips method selection)",
+        describe: "nhãn phương thức đăng nhập (bỏ qua bước chọn phương thức)",
         type: "string",
       }),
   handler: Effect.fn("Cli.providers.login")(function* (args) {
     const authSvc = yield* Auth.Service
 
     UI.empty()
-    yield* Prompt.intro("Add credential")
+    yield* Prompt.intro("Thêm thông tin xác thực")
     if (args.url) {
       const url = args.url.replace(/\/+$/, "")
-      const wellknown = (yield* cliTry(`Failed to load auth provider metadata from ${url}: `, () =>
+      const wellknown = (yield* cliTry(`Không thể tải metadata auth provider từ ${url}: `, () =>
         fetch(`${url}/.well-known/opencode`).then((x) => x.json()),
       )) as {
         auth: { command: string[]; env: string }
       }
-      yield* Prompt.log.info(`Running \`${wellknown.auth.command.join(" ")}\``)
+      yield* Prompt.log.info(`Đang chạy \`${wellknown.auth.command.join(" ")}\``)
       const abort = new AbortController()
       const proc = Process.spawn(wellknown.auth.command, { stdout: "pipe", stderr: "inherit", abort: abort.signal })
       if (!proc.stdout) {
-        yield* Prompt.log.error("Failed")
-        yield* Prompt.outro("Done")
+        yield* Prompt.log.error("Thất bại")
+        yield* Prompt.outro("Hoàn tất")
         return
       }
-      const [exit, token] = yield* cliTry("Failed to run auth provider command: ", () =>
+      const [exit, token] = yield* cliTry("Không thể chạy lệnh auth provider: ", () =>
         Promise.all([proc.exited, text(proc.stdout!)]),
       ).pipe(Effect.ensuring(Effect.sync(() => abort.abort())))
       if (exit !== 0) {
-        yield* Prompt.log.error("Failed")
-        yield* Prompt.outro("Done")
+        yield* Prompt.log.error("Thất bại")
+        yield* Prompt.outro("Hoàn tất")
         return
       }
       yield* Effect.orDie(authSvc.set(url, { type: "wellknown", key: wellknown.auth.env, token: token.trim() }))
-      yield* Prompt.log.success("Logged into " + url)
-      yield* Prompt.outro("Done")
+      yield* Prompt.log.success("Đã đăng nhập vào " + url)
+      yield* Prompt.outro("Hoàn tất")
       return
     }
 
@@ -396,8 +396,8 @@ export const ProvidersLoginCommand = effectCmd({
           label: x.name,
           value: x.id,
           hint: {
-            opencode: "recommended",
-            openai: "ChatGPT Plus/Pro or API key",
+            opencode: "được khuyến nghị",
+            openai: "ChatGPT Plus/Pro hoặc API key",
           }[x.id],
         })),
       ),
@@ -415,15 +415,15 @@ export const ProvidersLoginCommand = effectCmd({
       const byName = options.find((x) => x.label.toLowerCase() === input.toLowerCase())
       const match = byID ?? byName
       if (!match) {
-        return yield* fail(`Unknown provider "${input}"`)
+        return yield* fail(`Provider không rõ "${input}"`)
       }
       provider = match.value
     } else {
       provider = yield* promptValue(
         yield* Prompt.autocomplete({
-          message: "Select provider",
+          message: "Chọn provider",
           maxItems: 8,
-          options: [...options, { value: "other", label: "Other" }],
+          options: [...options, { value: "other", label: "Khác" }],
         }),
       )
     }
@@ -437,8 +437,8 @@ export const ProvidersLoginCommand = effectCmd({
     if (provider === "other") {
       provider = (yield* promptValue(
         yield* Prompt.text({
-          message: "Enter provider id",
-          validate: (x) => (x && x.match(/^[0-9a-z-]+$/) ? undefined : "a-z, 0-9 and hyphens only"),
+          message: "Nhập provider id",
+          validate: (x) => (x && x.match(/^[0-9a-z-]+$/) ? undefined : "chỉ a-z, 0-9 và dấu gạch ngang"),
         }),
       )).replace(/^@ai-sdk\//, "")
 
@@ -449,51 +449,51 @@ export const ProvidersLoginCommand = effectCmd({
       }
 
       yield* Prompt.log.warn(
-        `This only stores a credential for ${provider} - you will need configure it in opencode.json, check the docs for examples.`,
+        `Thao tác này chỉ lưu thông tin xác thực cho ${provider} - bạn cần cấu hình thêm trong opencode.json, xem tài liệu để có ví dụ.`,
       )
     }
 
     if (provider === "amazon-bedrock") {
       yield* Prompt.log.info(
-        "Amazon Bedrock authentication priority:\n" +
-          "  1. Bearer token (AWS_BEARER_TOKEN_BEDROCK or /connect)\n" +
-          "  2. AWS credential chain (profile, access keys, IAM roles, EKS IRSA)\n\n" +
-          "Configure via opencode.json options (profile, region, endpoint) or\n" +
-          "AWS environment variables (AWS_PROFILE, AWS_REGION, AWS_ACCESS_KEY_ID, AWS_WEB_IDENTITY_TOKEN_FILE).",
+        "Thứ tự ưu tiên xác thực Amazon Bedrock:\n" +
+          "  1. Bearer token (AWS_BEARER_TOKEN_BEDROCK hoặc /connect)\n" +
+          "  2. Chuỗi thông tin xác thực AWS (profile, access key, IAM role, EKS IRSA)\n\n" +
+          "Cấu hình qua các tùy chọn opencode.json (profile, region, endpoint) hoặc\n" +
+          "các biến môi trường AWS (AWS_PROFILE, AWS_REGION, AWS_ACCESS_KEY_ID, AWS_WEB_IDENTITY_TOKEN_FILE).",
       )
     }
 
     if (provider === "opencode") {
-      yield* Prompt.log.info("Create an api key at https://opencode.ai/auth")
+      yield* Prompt.log.info("Tạo api key tại https://opencode.ai/auth")
     }
 
     if (provider === "vercel") {
-      yield* Prompt.log.info("You can create an api key at https://vercel.link/ai-gateway-token")
+      yield* Prompt.log.info("Bạn có thể tạo api key tại https://vercel.link/ai-gateway-token")
     }
 
     if (["cloudflare", "cloudflare-ai-gateway"].includes(provider)) {
       yield* Prompt.log.info(
-        "Cloudflare AI Gateway can be configured with CLOUDFLARE_GATEWAY_ID, CLOUDFLARE_ACCOUNT_ID, and CLOUDFLARE_API_TOKEN environment variables. Read more: https://opencode.ai/docs/providers/#cloudflare-ai-gateway",
+        "Cloudflare AI Gateway có thể được cấu hình bằng các biến môi trường CLOUDFLARE_GATEWAY_ID, CLOUDFLARE_ACCOUNT_ID và CLOUDFLARE_API_TOKEN. Đọc thêm: https://opencode.ai/docs/providers/#cloudflare-ai-gateway",
       )
     }
 
     const key = yield* Prompt.password({
-      message: "Enter your API key",
-      validate: (x) => (x && x.length > 0 ? undefined : "Required"),
+      message: "Nhập API key của bạn",
+      validate: (x) => (x && x.length > 0 ? undefined : "Bắt buộc"),
     })
     const apiKey = yield* promptValue(key)
     yield* Effect.orDie(authSvc.set(provider, { type: "api", key: apiKey }))
 
-    yield* Prompt.outro("Done")
+    yield* Prompt.outro("Hoàn tất")
   }),
 })
 
 export const ProvidersLogoutCommand = effectCmd({
   command: "logout [provider]",
-  describe: "log out from a configured provider",
+  describe: "đăng xuất khỏi một provider đã cấu hình",
   builder: (yargs) =>
     yargs.positional("provider", {
-      describe: "provider id or name to log out from",
+      describe: "id hoặc tên provider cần đăng xuất",
       type: "string",
     }),
   // Removes a global auth credential; no project instance needed.
@@ -504,9 +504,9 @@ export const ProvidersLogoutCommand = effectCmd({
 
     UI.empty()
     const credentials: Array<[string, Auth.Info]> = Object.entries(yield* Effect.orDie(authSvc.all()))
-    yield* Prompt.intro("Remove credential")
+    yield* Prompt.intro("Xóa thông tin xác thực")
     if (credentials.length === 0) {
-      yield* Prompt.log.error("No credentials found")
+      yield* Prompt.log.error("Không tìm thấy thông tin xác thực nào")
       return
     }
     const database = yield* modelsDev.get()
@@ -522,13 +522,13 @@ export const ProvidersLogoutCommand = effectCmd({
         )?.value
       : yield* promptValue(
           yield* Prompt.autocomplete({
-            message: "Select provider",
+            message: "Chọn provider",
             maxItems: 8,
             options,
           }),
         )
-    if (!provider) return yield* fail(`Unknown configured provider "${args.provider}"`)
+    if (!provider) return yield* fail(`Provider đã cấu hình không rõ "${args.provider}"`)
     yield* Effect.orDie(authSvc.remove(provider))
-    yield* Prompt.outro("Logout successful")
+    yield* Prompt.outro("Đăng xuất thành công")
   }),
 })

@@ -584,7 +584,7 @@ export function Autocomplete(props: {
     commands: [
       {
         name: "prompt.autocomplete.prev",
-        title: "Previous autocomplete item",
+        title: "Mục gợi ý trước đó",
         category: "Autocomplete",
         run() {
           setStore("input", "keyboard")
@@ -593,7 +593,7 @@ export function Autocomplete(props: {
       },
       {
         name: "prompt.autocomplete.next",
-        title: "Next autocomplete item",
+        title: "Mục gợi ý kế tiếp",
         category: "Autocomplete",
         run() {
           setStore("input", "keyboard")
@@ -602,7 +602,7 @@ export function Autocomplete(props: {
       },
       {
         name: "prompt.autocomplete.hide",
-        title: "Hide autocomplete",
+        title: "Ẩn gợi ý",
         category: "Autocomplete",
         run() {
           hide()
@@ -610,7 +610,7 @@ export function Autocomplete(props: {
       },
       {
         name: "prompt.autocomplete.select",
-        title: "Select autocomplete item",
+        title: "Chọn mục gợi ý",
         category: "Autocomplete",
         run() {
           select()
@@ -618,7 +618,7 @@ export function Autocomplete(props: {
       },
       {
         name: "prompt.autocomplete.complete",
-        title: "Complete autocomplete item",
+        title: "Hoàn tất mục gợi ý",
         category: "Autocomplete",
         run() {
           const selected = options()[store.selected]
@@ -741,7 +741,7 @@ export function Autocomplete(props: {
           each={options()}
           fallback={
             <box paddingLeft={1} paddingRight={1}>
-              <text fg={theme.textMuted}>No matching items</text>
+              <text fg={theme.textMuted}>Không có mục khớp</text>
             </box>
           }
         >

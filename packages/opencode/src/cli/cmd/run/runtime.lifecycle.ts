@@ -127,7 +127,7 @@ function footerLabels(input: Pick<RunInput, "agent" | "model" | "variant">): Foo
   if (!input.model) {
     return {
       agentLabel,
-      modelLabel: "Model default",
+      modelLabel: "Model mặc định",
     }
   }
 
@@ -372,12 +372,12 @@ export async function createRuntimeLifecycle(input: LifecycleInput): Promise<Lif
       },
       async resetForReplay(next) {
         if (closed || renderer.isDestroyed || footer.isClosed) {
-          throw new Error("runtime closed")
+          throw new Error("runtime đã đóng")
         }
 
         await footer.idle()
         if (closed || renderer.isDestroyed || footer.isClosed) {
-          throw new Error("runtime closed")
+          throw new Error("runtime đã đóng")
         }
 
         footer.resetForReplay(true)

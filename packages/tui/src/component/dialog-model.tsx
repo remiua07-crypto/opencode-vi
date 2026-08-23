@@ -50,12 +50,12 @@ export function DialogModel(props: { providerID?: string }) {
       })
     }
 
-    const favoriteOptions = toOptions(favorites, "Favorites")
+    const favoriteOptions = toOptions(favorites, "Yêu thích")
     const recentOptions = toOptions(
       recents.filter(
         (item) => !favorites.some((fav) => fav.providerID === item.providerID && fav.modelID === item.modelID),
       ),
-      "Recent",
+      "Gần đây",
     )
 
     const providerOptions = pipe(
@@ -75,7 +75,7 @@ export function DialogModel(props: { providerID?: string }) {
             title: info.name ?? model,
             releaseDate: info.release_date,
             description: favorites.some((item) => item.providerID === provider.id && item.modelID === model)
-              ? "(Favorite)"
+              ? "(Yêu thích)"
               : undefined,
             category: connected() ? provider.name : undefined,
             disabled: provider.id === "opencode" && model.includes("-nano"),
@@ -110,7 +110,7 @@ export function DialogModel(props: { providerID?: string }) {
           providers(),
           map((option) => ({
             ...option,
-            category: "Popular providers",
+            category: "Provider phổ biến",
           })),
           take(6),
         )
@@ -135,7 +135,7 @@ export function DialogModel(props: { providerID?: string }) {
 
   const title = createMemo(() => {
     const value = provider()
-    if (!value) return "Select model"
+    if (!value) return "Chọn Model"
     return value.name
   })
 
@@ -160,14 +160,14 @@ export function DialogModel(props: { providerID?: string }) {
       actions={[
         {
           command: "model.dialog.provider",
-          title: connected() ? "Connect provider" : "View all providers",
+          title: connected() ? "Kết nối Provider" : "Xem tất cả Provider",
           onTrigger() {
             dialog.replace(() => <DialogProvider />)
           },
         },
         {
           command: "model.dialog.favorite",
-          title: "Favorite",
+          title: "Yêu thích",
           hidden: !connected(),
           onTrigger: (option) => {
             local.model.toggleFavorite(option.value as { providerID: string; modelID: string })

@@ -11,7 +11,7 @@ export function DialogVariant() {
     return [
       {
         value: "default",
-        title: "Default",
+        title: "Mặc định",
         onSelect: () => {
           dialog.clear()
           local.model.variant.set(undefined)
@@ -31,7 +31,7 @@ export function DialogVariant() {
   return (
     <DialogSelect<string>
       options={options()}
-      title={"Select variant"}
+      title={"Chọn biến thể"}
       current={local.model.variant.selected()}
       flat={true}
     />

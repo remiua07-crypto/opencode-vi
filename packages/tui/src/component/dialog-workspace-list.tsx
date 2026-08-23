@@ -39,9 +39,9 @@ export function DialogWorkspaceList() {
         return {
           title:
             removing() === workspace.id
-              ? "Deleting..."
+              ? "Đang xóa..."
               : deleting() === workspace.id
-                ? `Delete ${workspace.name}? Press delete again`
+                ? `Xóa ${workspace.name}? Nhấn xóa lần nữa`
                 : workspace.name,
           value: { workspace },
           footer: workspace.type,
@@ -71,7 +71,7 @@ export function DialogWorkspaceList() {
       setRemoving(undefined)
       toast.show({
         variant: "error",
-        title: "Failed to delete workspace",
+        title: "Xóa workspace thất bại",
         message: errorMessage(result.error),
       })
       return
@@ -103,7 +103,7 @@ export function DialogWorkspaceList() {
       actions={[
         {
           command: "session.delete",
-          title: "delete",
+          title: "xóa",
           onTrigger: (option) => void remove(option.value.workspace),
         },
       ]}
