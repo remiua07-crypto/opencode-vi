@@ -19,6 +19,7 @@ case "$arch" in
 esac
 
 asset="opencode-$os-$arch.zip"
+dir="${asset%.zip}"
 url="https://github.com/$REPO/releases/latest/download/$asset"
 
 echo "Đang tải $url ..."
@@ -26,7 +27,7 @@ tmp="$(mktemp -d)"
 curl -fL "$url" -o "$tmp/$asset"
 unzip -oq "$tmp/$asset" -d "$tmp/x"
 mkdir -p "$PREFIX/bin"
-install -m 0755 "$tmp/x/opencode/bin/opencode" "$PREFIX/bin/opencode"
+install -m 0755 "$tmp/x/$dir/bin/opencode" "$PREFIX/bin/opencode"
 rm -rf "$tmp"
 
 case ":$PATH:" in
